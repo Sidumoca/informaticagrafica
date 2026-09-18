@@ -10,10 +10,13 @@ public:
 private:
 	float vector[4];
 }; 
-PD operator+(const PD& other);
-PD operator-(const PD& other);
-PD operator*(float scalar);
-float escalar(const PD& other);
-PD vectorial(const PD& other);
-float module(const PD& other);
+PD operator+(const PD& other) const;
+PD operator-(const PD& other) const;
+PD operator*(float scalar) const;
+friend PD operator*(float scalar, const PD& vec); //para que vaya  escalar * vector
+PD operator/(float scalar) const;
+float dot(const PD& other) const;
+PD cross(const PD& other) const;
+float module() const;
+PD normalized();
 #endif // PD_HPP

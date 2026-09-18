@@ -1,5 +1,6 @@
 #include "planet.hpp"
 #include <iostream>
+#include <cmath>
 
 Planet::Planet(PD eje, PD ciudad, PD centro, float inclinacion, float azimut){
 	this->eje = eje;
@@ -10,20 +11,28 @@ Planet::Planet(PD eje, PD ciudad, PD centro, float inclinacion, float azimut){
 
 	dirCiudad = ciudad-centro;
 
-	float radio = module(eje);
+	float moduloEje = eje.module();
+
+	float radio = moduloEje/2.0;
 
 	//verificar que radio de eje y distancia centro-ciudad es igual
-	if(radio/2 != module(dirCiudad)){
-        STD::cerr << "Error: radio de eje y distancia centro-ciudad no son iguales" << std::endl;
-		return 1;
+	if(std::abs(radio - dirCiudad.module()) > 1e-6){
+        std::cerr << "Error: radio de eje y distancia centro-ciudad no son iguales" << std::endl;
 	}
 
 	//calcular estacion
-	// float x = centro[0] + radio*sin(azimut)*cos(inclinacion);
-	// float y = centro[1] + radio*sin(azimut)*sin(inclinacion);
-	// float z = centro[2] + radio*cos(azimut);
-	// this->estacion = new PD(x,y,z,true)
 
-	
-	
+	PD u(eje[0] / moduloEje, eje[1] / moduloEje, eje[2] / moduloEje, 0.0); //TODO: hacer new?
+
+	PD dirCiudadEcuador = dirCiudad - (dirCiudad.dot(u))*u;
+
+	PD v = dirCiudadEcuador / dirCiudadEcuador.module();
+
+	PD w = u.cross(v); //vectorial
+
+	float x = radio*sin(inclinacion)*cos(azimut);
+	float y = radio*sin(inclinacion)*sin(azimut);
+	float z = radio*cos(inclinacion);
+
+	this->estacion = centro + x*v + y*w + z*u;	
 }
