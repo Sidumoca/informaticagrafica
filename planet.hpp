@@ -6,7 +6,6 @@
 class Planet {
 	public:
 		Planet(PD eje, PD ciudad, PD centro, float inclinacion, float azimut);
-	private:
 		PD eje; //direccion
 		PD ciudad, centro; //puntos
 

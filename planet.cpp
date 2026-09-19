@@ -22,7 +22,7 @@ Planet::Planet(PD eje, PD ciudad, PD centro, float inclinacion, float azimut){
 
 	//calcular estacion
 
-	PD u(eje[0] / moduloEje, eje[1] / moduloEje, eje[2] / moduloEje, 0.0); //TODO: hacer new?
+	PD u = eje / moduloEje;
 
 	PD dirCiudadEcuador = dirCiudad - (dirCiudad.dot(u))*u;
 
@@ -34,5 +34,14 @@ Planet::Planet(PD eje, PD ciudad, PD centro, float inclinacion, float azimut){
 	float y = radio*sin(inclinacion)*sin(azimut);
 	float z = radio*cos(inclinacion);
 
-	this->estacion = centro + x*v + y*w + z*u;	
+	this->estacion = centro + x*v + y*w + z*u;
+
+	//normal de la superficie
+	normalEstacion = estacion-centro;
+	normalEstacion = normalEstacion / normalEstacion.module(); //para que modulo sea 1
+
+	//tangente a la longitud
+	tangenteLongitud = u.cross(normalEstacion); //uso u que es eje normalizado
+	//tangente a la latitud
+	tangenteLatitud = normalEstacion.cross(tangenteLongitud); //TODO: revisar orden
 }
