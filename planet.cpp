@@ -20,21 +20,19 @@ Planet::Planet(PD eje, PD ciudad, PD centro, float inclinacion, float azimut){
         std::cerr << "Error: radio de eje y distancia centro-ciudad no son iguales" << std::endl;
 	}
 
-	//calcular estacion
+	//calcular posición estacion
 
-	PD u = eje / moduloEje;
+	PD u = eje / moduloEje; // u es vector unitario del eje
+	PD dirCiudadEcuador = dirCiudad - (dirCiudad.dot(u))*u; // altura de la ciudad respecto al ecuador
+	PD v = dirCiudadEcuador / dirCiudadEcuador.module(); // convertir en vector unitario
+	PD w = u.cross(v); // producto vectorial para sacar la tercera componente
 
-	PD dirCiudadEcuador = dirCiudad - (dirCiudad.dot(u))*u;
+	PD x = u*cos(inclinacion)*radio;
+	PD y = v*sin(inclinacion)*cos(azimut)*radio;
+	PD z = w*sin(inclinacion)*sin(azimut)*radio;
 
-	PD v = dirCiudadEcuador / dirCiudadEcuador.module();
+	this->estacion = centro + x + y + z;
 
-	PD w = u.cross(v); //vectorial
-
-	float x = radio*sin(inclinacion)*cos(azimut);
-	float y = radio*sin(inclinacion)*sin(azimut);
-	float z = radio*cos(inclinacion);
-
-	this->estacion = centro + x*v + y*w + z*u;
 
 	//normal de la superficie
 	normalEstacion = estacion-centro;
@@ -42,6 +40,9 @@ Planet::Planet(PD eje, PD ciudad, PD centro, float inclinacion, float azimut){
 
 	//tangente a la longitud
 	tangenteLongitud = u.cross(normalEstacion); //uso u que es eje normalizado
+	tangenteLongitud = tangenteLongitud / tangenteLongitud.module();
 	//tangente a la latitud
-	tangenteLatitud = normalEstacion.cross(tangenteLongitud); //TODO: revisar orden
+	tangenteLatitud = normalEstacion.cross(tangenteLongitud);
+	tangenteLatitud = tangenteLatitud / tangenteLatitud.module();
+
 }

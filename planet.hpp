@@ -6,13 +6,15 @@
 class Planet {
 	public:
 		Planet(PD eje, PD ciudad, PD centro, float inclinacion, float azimut);
-		PD eje; //direccion
-		PD ciudad, centro; //puntos
+		PD eje; //dirección
+		PD ciudad; // punto
+		PD centro; //punto
 
 		PD dirCiudad;
 
 		float inclinacion; //inclinacion estacion. 0 -> pi
 		float azimut; //azimut estacion. -pi -> pi
+
 		PD estacion; //punto
 		
 		//direcciones
@@ -20,5 +22,6 @@ class Planet {
 		PD tangenteLongitud;
 		PD tangenteLatitud;
 
-}
+};
+
 #endif // PLANET_HPP
