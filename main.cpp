@@ -86,7 +86,7 @@ int main(){
     PD ciudadA(10, 0, 0, 1);
     PD centroA(0, 0, 0, 1);
     // Posicion de la estacion
-    float inclinacionA = PI / 3;   // 60 grados
+    float inclinacionA = M_PI / 3;   // 60 grados
     float azimutA = 0;
 
 
@@ -98,8 +98,11 @@ int main(){
     PD ciudadB(60, 0, 0, 1);
     PD centroB(50, 0, 0, 1);
     // Posicion de la estacion
-    float inclinacionB = 2 * PI / 3;   // 120 grados
-    float azimutB = PI / 2;            // 90 grados
+    float inclinacionB = M_PI / 2;   // 90 grados
+    float azimutB = M_PI;            // 180 grados
+	//COlision con:
+		// float inclinacionB = 2 * PI / 3;   // 120 grados
+		// float azimutB = PI / 2;            // 90 grados
 
     // =====================================================
     // CREAR LOS PLANETAS
@@ -167,7 +170,7 @@ int main(){
     std::cout << "             RESULTADO FINAL\n";
     std::cout << "========================================\n";
 
-    if (okAB && okBA)
+    if (ok)
     {
         std::cout << "La trayectoria es valida en ambas estaciones.\n";
     }
