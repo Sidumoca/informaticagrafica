@@ -9,7 +9,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 find_package(Eigen3 REQUIRED NO_MODULE)
 
 add_executable(planet
-    main.cpp
+    mainPlanetas.cpp
     pd.cpp
     planet.cpp
 )

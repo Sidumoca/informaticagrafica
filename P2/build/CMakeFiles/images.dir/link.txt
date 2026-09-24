@@ -1,0 +1,1 @@
+/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/images.dir/link.d CMakeFiles/images.dir/mainImagenes.cpp.o CMakeFiles/images.dir/image.cpp.o -o images  /usr/lib64/libpng.so /usr/lib64/libOpenEXR-3_2.so.31.3.2.4 /usr/lib64/libz.so /usr/lib64/libIlmThread-3_2.so.31.3.2.4 /usr/lib64/libIex-3_2.so.31.3.2.4 /usr/lib64/libOpenEXRCore-3_2.so.31.3.2.4 /usr/lib64/libImath-3_1.so.29.11.0 -lm
