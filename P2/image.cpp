@@ -1,4 +1,5 @@
 #include "image.hpp"
+#include <cmath>
 
 
 Image::Image(const char *path, bool isHDRIN)
@@ -57,9 +58,9 @@ void Image::write(const char *path){
 		for (std::size_t y = 0; y < height; ++y) {
 			rows[y] = pixels[y].data();
 			for (std::size_t x = 0; x < width; ++x) {
-				rows[y][4 * x + 0] = static_cast<png_byte>(image[y][x].Rojo);
-				rows[y][4 * x + 1] = static_cast<png_byte>(image[y][x].Verde);
-				rows[y][4 * x + 2] = static_cast<png_byte>(image[y][x].Azul);
+				rows[y][4 * x + 0] = static_cast<png_byte>(image[y][x].Rojo * 255);
+				rows[y][4 * x + 1] = static_cast<png_byte>(image[y][x].Verde * 255);
+				rows[y][4 * x + 2] = static_cast<png_byte>(image[y][x].Azul * 255);
 				rows[y][4 * x + 3] = 255;
 			}
 		}
@@ -173,9 +174,9 @@ void Image::read(const char *path){
 			image[y].resize(width);
 
 			for (std::size_t x = 0; x < width; ++x) {
-				image[y][x].Rojo = pixels[y][3 * x + 0];
-				image[y][x].Verde = pixels[y][3 * x + 1];
-				image[y][x].Azul = pixels[y][3 * x + 2];
+				image[y][x].Rojo = pixels[y][3 * x + 0] / 255.0f;
+				image[y][x].Verde = pixels[y][3 * x + 1] / 255.0f;
+				image[y][x].Azul = pixels[y][3 * x + 2] / 255.0f;
 			}
 		}
 		
@@ -185,17 +186,82 @@ void Image::read(const char *path){
 }
 
 
-void Image::clamping(){
+//TODO: cambiar espacio de color, cambiar solo luminancia
+
+bool Image::verificarYCambiar(){
 	if(!isHDR){
         std::cerr << "No puedes transformar una imagen LDR" << std::endl;		
-		return;
+		return false;
 	}
 	isHDR = false;
+	return true;
+}
+
+float Image::calcularMaximo(){
+	float maximo = 0;
 	for(unsigned i=0;i<height;++i){
 		for(unsigned j=0;j<width;++j){
-			image[i][j].Rojo = (image[i][j].Rojo > 255) ? 255 : image[i][j].Rojo;
-			image[i][j].Verde = (image[i][j].Verde > 255) ? 255 : image[i][j].Verde;
-			image[i][j].Azul = (image[i][j].Azul > 255) ? 255 : image[i][j].Azul;
+			if(image[i][j].Rojo > maximo) maximo = image[i][j].Rojo;
+			if(image[i][j].Verde > maximo) maximo = image[i][j].Verde;
+			if(image[i][j].Azul > maximo) maximo = image[i][j].Azul;
+		}
+	}
+	return maximo;
+}
+
+void Image::clamping(){
+	ecualizacionYClamping(1);
+}
+
+void Image::ecualizacion(){
+	ecualizacionYClamping(this->calcularMaximo());
+}
+
+void Image::ecualizacionYClamping(float V){
+	if(!this->verificarYCambiar()) return;
+
+	if(V <= 0) return; //dividir por cero como que mal
+	if(V != 1){
+		//ECUALIZO
+		for(unsigned i=0;i<height;++i){
+			for(unsigned j=0;j<width;++j){
+				image[i][j].Rojo = (image[i][j].Rojo / V);
+				image[i][j].Verde = (image[i][j].Verde / V);
+				image[i][j].Azul = (image[i][j].Azul / V);
+			}
+		}
+	}
+	//CLAMPEO
+	for(unsigned i=0;i<height;++i){
+		for(unsigned j=0;j<width;++j){
+			//ns si hace falta lo pongo por si acaso
+			image[i][j].Rojo = (image[i][j].Rojo < 0) ? 0 : image[i][j].Rojo;
+			image[i][j].Verde = (image[i][j].Verde < 0) ? 0 : image[i][j].Verde;
+			image[i][j].Azul = (image[i][j].Azul < 0) ? 0 : image[i][j].Azul;
+
+			image[i][j].Rojo = (image[i][j].Rojo > 1) ? 1 : image[i][j].Rojo;
+			image[i][j].Verde = (image[i][j].Verde > 1) ? 1 : image[i][j].Verde;
+			image[i][j].Azul = (image[i][j].Azul > 1) ? 1 : image[i][j].Azul;
 		}
 	}
 }
+
+void Image::curvaGamma(float gamma){
+	this->curvaGammaYClamping(this->calcularMaximo(), gamma);
+}
+
+void Image::curvaGammaYClamping(float V, float gamma){
+	ecualizacionYClamping(V);
+
+	float potencia= 1.0f/gamma;
+
+	for(unsigned i=0;i<height;++i){
+		for(unsigned j=0;j<width;++j){
+			image[i][j].Rojo = pow(image[i][j].Rojo, potencia);
+			image[i][j].Verde = pow(image[i][j].Verde, potencia);
+			image[i][j].Azul = pow(image[i][j].Azul, potencia);
+		}
+	}
+}
+
+

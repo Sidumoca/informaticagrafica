@@ -22,7 +22,13 @@ public:
 	void write(const char *path);
 	void read(const char *path);
 	void clamping();
+	void ecualizacion();
+	void ecualizacionYClamping(float V);
+	void curvaGamma(float gamma);
+	void curvaGammaYClamping(float V, float gamma);
 private:
+	bool verificarYCambiar();
+	float calcularMaximo();
 	std::vector<std::vector<Pixel>> image;
 	bool isHDR = false;
 	unsigned int width = 0;
