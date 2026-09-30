@@ -251,6 +251,10 @@ void Image::curvaGamma(float gamma){
 }
 
 void Image::curvaGammaYClamping(float V, float gamma){
+	if(gamma<=0){
+		std::cerr << "GAMMA debe ser mayor que cero" << std::endl;		
+		return;
+	} 
 	ecualizacionYClamping(V);
 
 	float potencia= 1.0f/gamma;
