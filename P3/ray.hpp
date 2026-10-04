@@ -2,6 +2,8 @@
 #define RAY_HPP
 
 #include "pd.hpp"
+#include "primitiva.hpp"
+#include <vector>
 
 class Ray {
 public:
@@ -9,6 +11,8 @@ public:
     PD direccion;
 
     Ray(PD origenIn, PD direccionIn);
+
+    bool intersecta(const std::vector<Primitiva*>& primitivas, PD& puntoInterseccionOut) const;
 };
 
 #endif // RAY_HPP
