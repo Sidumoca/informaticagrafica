@@ -1,8 +1,9 @@
-#pragma once
-#include 
+#ifndef PRIMITIVA_HPP
+#define PRIMITIVA_HPP
 
 #include "pd.hpp"
-#include "ray.hpp"
+
+class Ray; // Declaración adelantada porque sino hay dependencia circular.
 
 struct Emision {
 	float r;
@@ -20,3 +21,5 @@ class Primitiva {
 
 		virtual ~Primitiva() = default;
 };
+
+#endif // PRIMITIVA_HPP

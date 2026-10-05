@@ -1,0 +1,1 @@
+/usr/bin/c++  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/main3.dir/main3.cpp.o CMakeFiles/main3.dir/pd.cpp.o CMakeFiles/main3.dir/plano.cpp.o CMakeFiles/main3.dir/esfera.cpp.o CMakeFiles/main3.dir/ray.cpp.o -o main3

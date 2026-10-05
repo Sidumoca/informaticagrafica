@@ -161,7 +161,7 @@ float PD::module() const
     return v.norm();
 }
 
-bool isPoint() const{
+bool PD::isPoint() const{
     return vector[3];
 }
 
