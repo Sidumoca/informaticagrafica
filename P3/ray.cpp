@@ -15,7 +15,7 @@ Ray::Ray(PD origenIn, PD direccionIn)
     }else{
 		float mod=direccionIn.module();
 		if(mod!=0){
-			direccion=direccionIn/mod; //normalizar
+			if(mod!=1) direccion=direccionIn/mod; //normalizar
 		}else{
 			cerr << "La dirección del rayo no puede ser un vecto nulo" << endl;
 		}

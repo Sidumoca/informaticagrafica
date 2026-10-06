@@ -1,3 +1,0 @@
-/home/alkayata/Desktop/4/IG/P/P2/build/CMakeFiles/images.dir
-/home/alkayata/Desktop/4/IG/P/P2/build/CMakeFiles/edit_cache.dir
-/home/alkayata/Desktop/4/IG/P/P2/build/CMakeFiles/rebuild_cache.dir

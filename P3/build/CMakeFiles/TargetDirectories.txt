@@ -1,3 +1,0 @@
-/Users/albamorianoplou/Desktop/UNI/4-informatica/1-Semestre/4-IG/practicas/informaticagrafica/P3/build/CMakeFiles/main3.dir
-/Users/albamorianoplou/Desktop/UNI/4-informatica/1-Semestre/4-IG/practicas/informaticagrafica/P3/build/CMakeFiles/edit_cache.dir
-/Users/albamorianoplou/Desktop/UNI/4-informatica/1-Semestre/4-IG/practicas/informaticagrafica/P3/build/CMakeFiles/rebuild_cache.dir
