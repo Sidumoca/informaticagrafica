@@ -2,14 +2,9 @@
 #define PRIMITIVA_HPP
 
 #include "pd.hpp"
+#include "image.hpp"
 
 class Ray; // Declaración adelantada porque sino hay dependencia circular.
-
-struct Emision {
-	float r;
-	float g;
-	float b;
-};
 
 //Clase Abstracta
 class Primitiva {

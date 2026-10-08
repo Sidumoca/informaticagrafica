@@ -7,47 +7,46 @@
 #include "primitiva.hpp"
 #include "ray.hpp"
 #include "pd.hpp"
+#include "camara.hpp"
 
 using namespace std;
 
 vector<Primitiva*> primitivas;
 
-
 int main() {
-	PD centroEsfera(2,0,0,1);
-	Emision emisionEsfera = {10,20,30};
-	Esfera esfera(centroEsfera, 1.0, emisionEsfera);
+	PD origenCamara(0,0,-3.5, 1);
+	PD leftCamara(-1,0,0, 0);
+	PD upCamara(0,1,0, 0);
+	PD forwardCamara(0,0,3, 0);
+	int width = 256, height = 256;
+	Camara camara(origenCamara, leftCamara, upCamara, forwardCamara, width, height, primitivas);
+	
+	Emision rojo= {16,0,0};
+	Emision verde= {0,16,0};
+	Emision azul= {0,0,16};
+	Emision blanco={16,16,16};
 
-	PD normalPlano(0,1,0,0);
-	Emision emisionPlano = {30,20,10};
-	Plano plano(-2.0, normalPlano, emisionPlano);
+	Plano leftPlane(1, PD(1,0,0,0), azul);
+	Plano rightPlane(1, PD(-1,0,0,0), verde);
+	Plano floorPlane(1, PD(0,1,0,0), rojo);
+	Plano ceilingPlane(1, PD(0,-1,0,0), rojo);
+	Plano backPlane(1, PD(0,0,-1,0), blanco);
 
-	primitivas.push_back(&esfera);
-	primitivas.push_back(&plano);
 
-	// No intersección
-	//PD origenRayo(0,0,0,1);
-	//PD direccionRayo(0,-1,0,0);
+	Emision emisionEsferaLeft = {0.8,0.6,0.9};
+	Esfera leftEsfera(PD(-0.5,-0.7,0.25,1), 0.3, emisionEsferaLeft);
+	Emision emisionEsferaRight = {0.5,0.9,0.9};
+	Esfera rightEsfera(PD(0.5,-0.7,-0.25,1), 0.3, emisionEsferaRight);
 
-	// Intersección con plano: (0,2,0)
-	//PD origenRayo(0,0,0,1);
-	//PD direccionRayo(0,1,0,0);
+	primitivas.push_back(&leftPlane);
+	primitivas.push_back(&rightPlane);
+	primitivas.push_back(&floorPlane);
+	primitivas.push_back(&ceilingPlane);
+	primitivas.push_back(&backPlane);
+	primitivas.push_back(&leftEsfera);
+	primitivas.push_back(&rightEsfera);
 
-	// Intersección con esfera: (1,0,0)
-	//PD origenRayo(0,0,0,1);
-	//PD direccionRayo(1,0,0,0);
-
-	// Intersección ambos: (1.02, 0.20, 0)
-	PD origenRayo(0,0,0,1);
-	PD direccionRayo(1,0.2,0,0);
-
-	Ray rayo(origenRayo, direccionRayo);
-	PD puntoInterseccion;
-	if (rayo.intersecta(primitivas, puntoInterseccion)) {
-		cout << "Interseccion encontrada en: " << puntoInterseccion[0] << ", " << puntoInterseccion[1] << ", " << puntoInterseccion[2] << endl;
-	} else {
-		cout << "No hay interseccion con las primitivas." << endl;
-	}
+	camara.imprimirImagen("test.png");
 
 	primitivas.clear();
 }

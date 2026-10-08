@@ -3,6 +3,7 @@
 
 #include "pd.hpp"
 #include "primitiva.hpp"
+#include "image.hpp"
 #include <vector>
 
 class Ray {
@@ -12,7 +13,7 @@ public:
 
     Ray(PD origenIn, PD direccionIn);
 
-    bool intersecta(const std::vector<Primitiva*>& primitivas, PD& puntoInterseccionOut) const;
+    bool intersecta(const std::vector<Primitiva*>& primitivas, PD& puntoInterseccionOut, Emision& emisionOut) const;
 };
 
 #endif // RAY_HPP

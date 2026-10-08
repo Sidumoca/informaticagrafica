@@ -1,0 +1,279 @@
+#include "image.hpp"
+#include <cmath>
+
+Image::Image(unsigned int widthIN, unsigned int heightIN, bool isHDRIN)
+    :isHDR(isHDRIN), width(widthIN), height(heightIN)
+{
+	image.resize(height);
+	for(unsigned int i=0;i<height;++i){
+		image[i].resize(width);
+	}
+}
+
+Image::Image(const char *path, bool isHDRIN)
+    :isHDR(isHDRIN)
+{
+	this->read(path);
+}
+
+void Image::write(const char *path){
+	if(this->isHDR){
+
+        Array2D<Rgba> pixels(height, width);
+        for (unsigned int y=0; y<height; y++)
+        {
+            for (unsigned int x=0; x<width; x++)
+                pixels[y][x] = Rgba(
+                    image[y][x].r,
+                    image[y][x].g,
+                    image[y][x].b
+                );
+        }
+
+        try {
+            RgbaOutputFile file (path, width, height, WRITE_RGBA);
+            file.setFrameBuffer (&pixels[0][0], 1, width);
+            file.writePixels (height);
+        } catch (const std::exception &e) {
+            std::cerr << "Error escribiendo " << path << ": " << e.what() << std::endl;
+        }
+
+	} else { //es LDR
+		FILE *fp = fopen(path, "wb");
+		png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+		png_infop info_ptr = png_create_info_struct(png_ptr);
+		if (!png_ptr || !info_ptr) {
+			fclose(fp);
+			return;
+		}
+		png_init_io(png_ptr, fp);
+		png_set_IHDR(
+			png_ptr,
+			info_ptr,
+			width,
+			height,
+			8,
+			PNG_COLOR_TYPE_RGBA,
+			PNG_INTERLACE_NONE,
+			PNG_COMPRESSION_TYPE_DEFAULT,
+			PNG_FILTER_TYPE_DEFAULT
+		);
+		std::vector<std::vector<png_byte>> pixels(
+			height, std::vector<png_byte>(width * 4)
+		);
+		std::vector<png_bytep> rows(height);
+
+		for (std::size_t y = 0; y < height; ++y) {
+			rows[y] = pixels[y].data();
+			for (std::size_t x = 0; x < width; ++x) {
+				rows[y][4 * x + 0] = static_cast<png_byte>(image[y][x].r * 255);
+				rows[y][4 * x + 1] = static_cast<png_byte>(image[y][x].g * 255);
+				rows[y][4 * x + 2] = static_cast<png_byte>(image[y][x].b * 255);
+				rows[y][4 * x + 3] = 255;
+			}
+		}
+
+		png_set_rows(png_ptr, info_ptr, rows.data());
+		png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, NULL);
+		png_destroy_write_struct(&png_ptr, &info_ptr);
+		fclose(fp);
+	}
+}
+void Image::read(const char *path){
+	if(this->isHDR){
+
+//----------------------------------------------------
+        try
+        {
+            Imf::RgbaInputFile file(path);
+
+            Imath::Box2i dw = file.dataWindow();
+
+            width  = dw.max.x - dw.min.x + 1;
+            height = dw.max.y - dw.min.y + 1;
+
+            Imf::Array2D<Imf::Rgba> pixels(height, width);
+
+            file.setFrameBuffer(
+                &pixels[0][0],
+                1,
+                width
+            );
+
+            file.readPixels(dw.min.y, dw.max.y);
+
+            image.resize(height);
+
+            for (unsigned int y = 0; y < height; y++)
+            {
+                image[y].resize(width);
+
+                for (unsigned int x = 0; x < width; x++)
+                {
+                    image[y][x].r  = pixels[y][x].r;
+                    image[y][x].g = pixels[y][x].g;
+                    image[y][x].b  = pixels[y][x].b;
+                }
+            }
+        }
+        catch (const std::exception& e)
+        {
+            std::cerr << "Error leyendo la imagen "
+                      << path << ": "
+                      << e.what()
+                      << std::endl;
+        }
+//----------------------------------------------------
+    
+	} else { // es LDR
+		FILE *fp = fopen(path, "rb");
+		if (!fp) {
+			return;
+		}
+		png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+		png_infop info_ptr = png_create_info_struct(png_ptr);
+		if (!png_ptr || !info_ptr) {
+			fclose(fp);
+			return;
+		}
+
+		png_init_io(png_ptr, fp);
+		png_read_info(png_ptr, info_ptr);
+		//NORMALIZAR IMAGEN-----------------------------------
+
+		// Normalize every input to 8-bit RGB.
+		png_uint_32 input_width, input_height;
+		int bit_depth, color_type;
+		png_get_IHDR(png_ptr, info_ptr, &input_width, &input_height, &bit_depth, &color_type, nullptr, nullptr, nullptr);
+
+		if (color_type == PNG_COLOR_TYPE_PALETTE) {
+			png_set_palette_to_rgb(png_ptr); // Convert indexed color to RGB
+		}
+		if (color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8) {
+			png_set_expand_gray_1_2_4_to_8(png_ptr); // Expand low-bit grayscale to 8-bit
+		}
+		if (bit_depth == 16) {
+			png_set_strip_16(png_ptr); // Scale 16-bit down to 8-bit
+		}
+		if (color_type == PNG_COLOR_TYPE_GRAY || color_type == PNG_COLOR_TYPE_GRAY_ALPHA) {
+			png_set_gray_to_rgb(png_ptr); // Convert grayscale to RGB
+		}
+		if (color_type & PNG_COLOR_MASK_ALPHA) {
+			png_set_strip_alpha(png_ptr); //eliminar alpha
+		}
+		//--------------------------------------------------------------------
+
+		png_read_update_info(png_ptr, info_ptr);
+		width = png_get_image_width(png_ptr, info_ptr);
+		height = png_get_image_height(png_ptr, info_ptr);
+
+		std::vector<std::vector<png_byte>> pixels(
+			height, std::vector<png_byte>(width * 3)
+		);
+		std::vector<png_bytep> rows(height);
+		for (std::size_t y = 0; y < height; ++y) {
+			rows[y] = pixels[y].data();
+		}
+		png_read_image(png_ptr, rows.data());
+		
+		image.resize(height);
+
+		for (std::size_t y = 0; y < height; ++y) {
+			image[y].resize(width);
+
+			for (std::size_t x = 0; x < width; ++x) {
+				image[y][x].r = pixels[y][3 * x + 0] / 255.0f;
+				image[y][x].g = pixels[y][3 * x + 1] / 255.0f;
+				image[y][x].b = pixels[y][3 * x + 2] / 255.0f;
+			}
+		}
+		
+		png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+		fclose(fp);
+	}
+}
+
+
+//TODO: cambiar espacio de color, cambiar solo luminancia
+
+bool Image::verificarYCambiar(){
+	if(!isHDR){
+        std::cerr << "No puedes transformar una imagen LDR" << std::endl;		
+		return false;
+	}
+	isHDR = false;
+	return true;
+}
+
+float Image::calcularMaximo(){
+	float maximo = 0;
+	for(unsigned i=0;i<height;++i){
+		for(unsigned j=0;j<width;++j){
+			if(image[i][j].r > maximo) maximo = image[i][j].r;
+			if(image[i][j].g > maximo) maximo = image[i][j].g;
+			if(image[i][j].b > maximo) maximo = image[i][j].b;
+		}
+	}
+	return maximo;
+}
+
+void Image::clamping(){
+	ecualizacionYClamping(1);
+}
+
+void Image::ecualizacion(){
+	ecualizacionYClamping(this->calcularMaximo());
+}
+
+void Image::ecualizacionYClamping(float V){
+	if(!this->verificarYCambiar()) return;
+
+	if(V <= 0) return; //dividir por cero como que mal
+	if(V != 1){
+		//ECUALIZO
+		for(unsigned i=0;i<height;++i){
+			for(unsigned j=0;j<width;++j){
+				image[i][j].r = (image[i][j].r / V);
+				image[i][j].g = (image[i][j].g / V);
+				image[i][j].b = (image[i][j].b / V);
+			}
+		}
+	}
+	//CLAMPEO
+	for(unsigned i=0;i<height;++i){
+		for(unsigned j=0;j<width;++j){
+			//ns si hace falta lo pongo por si acaso
+			image[i][j].r = (image[i][j].r < 0) ? 0 : image[i][j].r;
+			image[i][j].g = (image[i][j].g < 0) ? 0 : image[i][j].g;
+			image[i][j].b = (image[i][j].b < 0) ? 0 : image[i][j].b;
+
+			image[i][j].r = (image[i][j].r > 1) ? 1 : image[i][j].r;
+			image[i][j].g = (image[i][j].g > 1) ? 1 : image[i][j].g;
+			image[i][j].b = (image[i][j].b > 1) ? 1 : image[i][j].b;
+		}
+	}
+}
+
+void Image::curvaGamma(float gamma){
+	this->curvaGammaYClamping(this->calcularMaximo(), gamma);
+}
+
+void Image::curvaGammaYClamping(float V, float gamma){
+	if(gamma<=0){
+		std::cerr << "GAMMA debe ser mayor que cero" << std::endl;		
+		return;
+	} 
+	ecualizacionYClamping(V);
+
+	float potencia= 1.0f/gamma;
+
+	for(unsigned i=0;i<height;++i){
+		for(unsigned j=0;j<width;++j){
+			image[i][j].r = pow(image[i][j].r, potencia);
+			image[i][j].g = pow(image[i][j].g, potencia);
+			image[i][j].b = pow(image[i][j].b, potencia);
+		}
+	}
+}
+
+
