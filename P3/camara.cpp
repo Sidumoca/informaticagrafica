@@ -2,6 +2,8 @@
 #include "ray.hpp"
 #include <iostream>
 
+using namespace std;
+
 Camara::Camara(PD origenIn, PD leftIn, PD upIn, PD forwardIn, int widthIn, int heightIn, std::vector<Primitiva*> primitivasIn){
 	this->origen=origenIn;
 	this->left=leftIn;
@@ -32,7 +34,8 @@ Emision Camara::generateRay(int i, int j){
 
 	PD puntoInterseccion;
 	Emision emision;
-	ray.intersecta(primitivas, puntoInterseccion, emision);
+	bool choca = ray.intersecta(primitivas, puntoInterseccion, emision);
+	//if(!choca && (i==127 || i==128)) cout << "El rayo (" << i << "," << j << ") le ha fallado a todo! Se ha lanzado a " << ray.direccion << endl;
 	return emision;
 }
 

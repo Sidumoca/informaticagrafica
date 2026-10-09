@@ -1,12 +1,15 @@
 #ifndef PD_HPP
 #define PD_HPP
 
+#include <iosfwd>
+
 class PD {
 public:
 	PD();
 	PD(float x, float y, float z, float w);
 	float& operator[](int i);
     const float& operator[](int i) const;
+	friend std::ostream& operator<<(std::ostream& os, const PD& pd);
 
 	PD operator+(const PD& other) const;
 	PD operator-(const PD& other) const;

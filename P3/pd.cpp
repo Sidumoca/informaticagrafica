@@ -19,6 +19,12 @@ PD::PD(float x, float y, float z, float w) {
 	vector[3] = w;
 }
 
+std::ostream& operator<<(std::ostream& os, const PD& pd)
+{
+	return os << "(" << pd.vector[0] << ", " << pd.vector[1] << ", "
+			  << pd.vector[2] << ", " << pd.vector[3] << ")";
+}
+
 const float& PD::operator[](int i) const {
 	return vector[i];
 }
@@ -164,4 +170,3 @@ float PD::module() const
 bool PD::isPoint() const{
     return vector[3];
 }
-
