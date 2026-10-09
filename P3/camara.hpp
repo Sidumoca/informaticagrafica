@@ -8,7 +8,7 @@
 
 class Camara {
 	public:
-		Camara(PD origenIn, PD leftIn, PD upIn, PD forwardIn, int widthIn, int heightIn, std::vector<Primitiva*> primitivasIn);
+		Camara(PD origenIn, PD leftIn, PD upIn, PD forwardIn, int widthIn, int heightIn, std::vector<Primitiva*> primitivasIn,  int raysPerPixelIn);
 		PD origen; 
 		PD left; 
 		PD up; 
@@ -23,9 +23,10 @@ class Camara {
 		PD uUp;
 
 		std::vector<Primitiva*> primitivas;
-
+		int raysPerPixel;
 
 		Emision generateRay(int i, int j);
+		Emision generateKRays(int i, int j, int k);
 		void imprimirImagen(const char *path);
 
 };

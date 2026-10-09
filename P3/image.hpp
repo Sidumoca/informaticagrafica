@@ -13,6 +13,14 @@ struct Emision {
 	float r;
 	float g;
 	float b;
+
+	Emision operator+(const Emision& other) const {
+        return { r + other.r, g + other.g, b + other.b };
+    }
+
+	Emision operator/(float divisor) const {
+		return { r / divisor, g / divisor, b / divisor };
+	}
 };
 
 class Image {

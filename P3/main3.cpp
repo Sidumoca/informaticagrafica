@@ -14,6 +14,9 @@ using namespace std;
 vector<Primitiva*> primitivas;
 
 int main() {
+	int raysPerPixel = 8;
+
+
 	PD origenCamara(0,0,-3.5, 1);
 	PD leftCamara(-1,0,0, 0);
 	PD upCamara(0,1,0, 0);
@@ -50,7 +53,7 @@ int main() {
 	
 	//primitivas.push_back(&esfera);
 	
-	Camara camara(origenCamara, leftCamara, upCamara, forwardCamara, width, height, primitivas);
+	Camara camara(origenCamara, leftCamara, upCamara, forwardCamara, width, height, primitivas, raysPerPixel);
 	camara.imprimirImagen("test.png");
 
 	primitivas.clear();
