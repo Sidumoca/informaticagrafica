@@ -14,7 +14,7 @@ using namespace std;
 vector<Primitiva*> primitivas;
 
 int main() {
-	int raysPerPixel = 8;
+	int raysPerPixel = 64;
 
 
 	PD origenCamara(0,0,-3.5, 1);
@@ -23,10 +23,10 @@ int main() {
 	PD forwardCamara(0,0,3, 0);
 	int width = 256, height = 256;
 	
-	Emision rojo= {16,0,0};
-	Emision verde= {0,16,0};
-	Emision azul= {0,0,16};
-	Emision blanco={16,16,16};
+	Emision rojo= {1,0,0};
+	Emision verde= {0,1,0};
+	Emision azul= {0,0,1};
+	Emision blanco={1,1,1};
 	
 	Plano leftPlane(1, PD(1,0,0,0), azul);
 	Plano rightPlane(1, PD(-1,0,0,0), verde);

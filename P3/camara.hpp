@@ -25,7 +25,7 @@ class Camara {
 		std::vector<Primitiva*> primitivas;
 		int raysPerPixel;
 
-		Emision generateRay(int i, int j);
+		Emision generateRay(int i, int j, float multiplierX, float multiplierY);
 		Emision generateKRays(int i, int j, int k);
 		void imprimirImagen(const char *path);
 
