@@ -3,6 +3,7 @@
 #include <vector>
 #include <iostream>
 #include "esfera.hpp"
+#include "monolito.hpp"
 #include "plano.hpp"
 #include "primitiva.hpp"
 #include "ray.hpp"
@@ -14,14 +15,14 @@ using namespace std;
 vector<Primitiva*> primitivas;
 
 int main() {
-	int raysPerPixel = 64;
+	int raysPerPixel = 32;
 
 
 	PD origenCamara(0,0,-3.5, 1);
 	PD leftCamara(-1,0,0, 0);
 	PD upCamara(0,1,0, 0);
 	PD forwardCamara(0,0,3, 0);
-	int width = 256, height = 256;
+	int width = 512, height = 512;
 	
 	Emision rojo= {1,0,0};
 	Emision verde= {0,1,0};
@@ -38,7 +39,10 @@ int main() {
 	Emision emisionEsferaLeft = {0.8,0.6,0.9};
 	Esfera leftEsfera(PD(-0.5,-0.7,0.25,1), 0.3, emisionEsferaLeft);
 	Emision emisionEsferaRight = {0.5,0.9,0.9};
-	Esfera rightEsfera(PD(0.5,-0.7,-0.25,1), 0.3, emisionEsferaRight);
+	Monolito rightMonolito(
+		PD(0.5,-0.7,-0.25,1),
+		PD(0.2,0,0,0), PD(0,0.6,0,0), PD(0,0,0.05,0),
+		{0,0,0});
 	
 	primitivas.push_back(&leftPlane);
 	primitivas.push_back(&rightPlane);
@@ -46,7 +50,7 @@ int main() {
 	primitivas.push_back(&ceilingPlane);
 	primitivas.push_back(&backPlane);
 	primitivas.push_back(&leftEsfera);
-	primitivas.push_back(&rightEsfera);
+	primitivas.push_back(&rightMonolito);
 	
 	// Emision em={0.2,0.3,0.9};
 	// Esfera esfera(PD(0,0,0,1), 0.3, em);

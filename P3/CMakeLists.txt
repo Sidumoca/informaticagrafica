@@ -9,6 +9,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 find_package(Eigen3 REQUIRED NO_MODULE)
 find_package(PNG REQUIRED)
 find_package(OpenEXR REQUIRED)
+find_package(OpenMP REQUIRED)
 
 add_executable(main3
 main3.cpp
@@ -18,9 +19,10 @@ esfera.cpp
 ray.cpp
 image.cpp
 camara.cpp
+monolito.cpp
 )
 
-target_link_libraries(main3 PRIVATE Eigen3::Eigen PNG::PNG OpenEXR::OpenEXR)
+target_link_libraries(main3 PRIVATE Eigen3::Eigen PNG::PNG OpenEXR::OpenEXR OpenMP::OpenMP_CXX)
 
 if(MSVC)
 target_compile_options(main3 PRIVATE /W4)
