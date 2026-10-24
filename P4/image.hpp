@@ -25,6 +25,10 @@ struct Emision {
 	Emision operator*(float scalar) const {
 		return { r * scalar, g * scalar, b * scalar };
 	}
+
+	Emision operator*(const Emision& other) const {
+		return { r * other.r, g * other.g, b * other.b };
+	}
 };
 
 class Image {

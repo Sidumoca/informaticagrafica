@@ -58,10 +58,30 @@ bool Monolito::intersecta(Ray ray, PD& puntoInterseccionOut) const{
 	if (tmax < 1e-6f) return false; //monolito detras del rayo
 
 	//si tmin <0 el rayo sale de dentro, la salida tmax es el primer punto de contacto
-	float tHit = (tmin >= 1e-6f) ? tmin : tmax;
+	float tHit = (tmin >= 0) ? tmin : tmax;
 
 	//no se compara con 0 por si el rayo saliera directamente de la superficie del monolito
 
 	puntoInterseccionOut = ray.origen + ray.direccion * tHit;
 	return true;
+}
+
+PD Monolito::getNormal(const PD& punto) const{
+	PD aux = punto - centro;
+
+	//proyeccion espacio local
+	float cI = aux.dot(uI) / mediaLen[0];
+    float cJ = aux.dot(uJ) / mediaLen[1];
+    float cK = aux.dot(uK) / mediaLen[2];
+
+	//Segun con que cara ha chocado devolvemos una normal u otra
+	if (abs(cI) >= abs(cJ) && abs(cI) >= abs(cK)) {
+        return (cI > 0) ? uI : (uI * -1.0f);
+    } 
+    else if (abs(cJ) >= abs(cI) && abs(cJ) >= abs(cK)) {
+        return (cJ > 0) ? uJ : (uJ * -1.0f);
+    } 
+    else {
+        return (cK > 0) ? uK : (uK * -1.0f);
+    }
 }

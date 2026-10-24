@@ -1,5 +1,7 @@
 #include "ray.hpp"
 #include <limits>
+#include <cmath>
+#include <math.h>
 #include <iostream>
 
 using namespace std;
@@ -29,14 +31,14 @@ bool Ray::intersecta(Escena escena, PD& puntoInterseccionOut, Emision& emisionOu
 	emisionOut.g = 0;
 	emisionOut.b = 0;
 	PD puntoInterseccionTemp;
-	Primitiva primitivaAux;
+	Primitiva* primitivaCercana;
 
 	for (const auto& primitiva : escena.primitivas) {
 		if (primitiva->intersecta(*this, puntoInterseccionTemp)) {
 			float distancia = (puntoInterseccionTemp - origen).module();
 			if (distancia < distanciaMinima) {
 				distanciaMinima = distancia;
-				primitivaAux.copy(primitiva);
+				primitivaCercana = primitiva;
 				puntoInterseccionOut = puntoInterseccionTemp;
 				interseccionEncontrada = true;
 			}
@@ -44,22 +46,40 @@ bool Ray::intersecta(Escena escena, PD& puntoInterseccionOut, Emision& emisionOu
 	}
 
 	if(interseccionEncontrada){
-		float Emision = {0,0,0};
+		Emision emLuz = {0,0,0};
+
+		PD normal = primitivaCercana -> getNormal(puntoInterseccionOut);
+		if(normal.dot(this->direccion) > 0) { //si esta mirando hacia el otro lado
+			normal = normal * -1.0;
+		}
+
 		for (const auto& luzPuntual : escena.lucesPuntuales) {
 			PD direccionLuz = luzPuntual->posicion - puntoInterseccionOut;
-			Ray rayoHaciaLuz(puntoInterseccionOut, direccionLuz);
-			PD puntoInterseccionLuz;
-			Emision emisionLuz;
-			if (rayoHaciaLuz.intersecta(escena, puntoInterseccionLuz, emisionLuz)) {
-				PD dirAux = puntoInterseccionLuz-puntoInterseccionOut;
-				if(dirAux.module() < direccionLuz.module()){ //si hay algo antes de la luz
-					emisionOut = primitivaAux.emision;
-					return true;
+			float dist = direccionLuz.module();
+			PD wi= direccionLuz / dist; //normalizo
+
+			Ray rayoSombra(puntoInterseccionOut + normal * 0.00001f, wi);
+			bool enSombra = false;
+			PD puntoInterseccionRayoSombra;
+
+			for (const auto& primitiva : escena.primitivas) {
+				if (primitiva->intersecta(rayoSombra, puntoInterseccionRayoSombra)) {
+					float distObstaculo = (puntoInterseccionRayoSombra - rayoSombra.origen).module();
+					if (distObstaculo < dist) {
+						enSombra = true;
+						break; //si hay algo antes de la luz
+					}
 				}
 			}
-			//si no hay nada antes de la luz (no intersecta o intersecta despues)
-			Emision += primitivaAux.emision * luzPuntual->emision;
+
+			if(!enSombra){
+				float coseno = abs(normal.dot(wi)); //el coseno (tercera parte)
+				float reduccionDistancia = 1.0 / (dist* dist); //1/dist^2
+
+				emLuz = emLuz + ((luzPuntual->emision * reduccionDistancia) * (primitivaCercana->emision / M_PI) * coseno);
+			}
 		}
+		emisionOut = emLuz;
 	}
 	return interseccionEncontrada;
 }

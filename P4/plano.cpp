@@ -3,8 +3,10 @@
 
 Plano::Plano(float distanciaIn, PD normalIn, Emision emisionIn, Reflectancia reflectanciaIn)
 	:Primitiva(emisionIn, reflectanciaIn)
-	,distancia(distanciaIn), normal(normalIn){ 
+	,distancia(distanciaIn){ 
     if(normalIn.isPoint()) std::cerr << "La normal del plano debe ser una dirección." << std::endl; 
+    //normalizo normal porsiaca
+    this->normal = normalIn/normalIn.module();
 }
 
 bool Plano::intersecta(Ray ray, PD& puntoInterseccionOut) const{
@@ -18,4 +20,8 @@ bool Plano::intersecta(Ray ray, PD& puntoInterseccionOut) const{
         }
     }
     return hay_interseccion;
+}
+
+PD Plano::getNormal(const PD& punto) const{
+    return this->normal;
 }

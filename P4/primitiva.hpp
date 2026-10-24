@@ -3,7 +3,6 @@
 
 #include "pd.hpp"
 #include "image.hpp"
-#include <math.h>
 
 class Ray; // Declaración adelantada porque sino hay dependencia circular.
 
@@ -19,9 +18,7 @@ class Primitiva {
 
         explicit Primitiva(Emision emisionIn, Reflectancia reflectanciaIn):emision(emisionIn), reflectancia(reflectanciaIn)  {}; 
         virtual bool intersecta(Ray ray, PD& puntoInterseccionOut) const = 0;
-        Emision devolverEmision(){
-            return emision*reflectancia.kd/M_PI;
-        }
+        virtual PD getNormal(const PD& punto) const = 0;
 
 		virtual ~Primitiva() = default;
 };

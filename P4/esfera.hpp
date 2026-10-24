@@ -12,6 +12,7 @@ public:
 
 	Esfera(PD centroIn, float radioIn, Emision emisionIn, Reflectancia reflectanciaIn);
 	bool intersecta(Ray ray, PD& puntoInterseccionOut) const override;
+	PD getNormal(const PD& punto) const override;
 }; 
 
 #endif // ESFERA_HPP

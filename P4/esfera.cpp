@@ -27,3 +27,8 @@ bool Esfera::intersecta(Ray ray, PD& puntoInterseccionOut) const{
 	return true;
 	
 }
+
+PD Esfera::getNormal(const PD& punto) const{
+	PD aux = punto - this->centro;
+    return aux/aux.module();
+}

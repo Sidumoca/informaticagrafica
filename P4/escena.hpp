@@ -10,11 +10,11 @@ class Escena{
     public:
         std::vector<Primitiva*> primitivas;
         std::vector<LuzPuntual*> lucesPuntuales;
-        Escena();
+        Escena() = default;
         ~Escena(){
 			primitivas.clear();
 			lucesPuntuales.clear();
 		} //Hacer que borre todos los punteros de los vectores
-}
+};
 
 #endif // ESCENA_HPP

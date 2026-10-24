@@ -16,7 +16,7 @@ using namespace std;
 
 int main() {
 
-	Escena escena();
+	Escena escena;
 
 	int raysPerPixel = 32;
 
@@ -31,20 +31,19 @@ int main() {
 	Emision azul= {0,0,1};
 	Emision blanco={1,1,1};
 	
-	Plano leftPlane(1, PD(1,0,0,0), azul);
-	Plano rightPlane(1, PD(-1,0,0,0), verde);
-	Plano floorPlane(1, PD(0,1,0,0), rojo);
-	Plano ceilingPlane(1, PD(0,-1,0,0), rojo);
-	Plano backPlane(1, PD(0,0,-1,0), blanco);
+	Plano leftPlane(1, PD(1,0,0,0), azul, {1});
+	Plano rightPlane(1, PD(-1,0,0,0), verde, {1});
+	Plano floorPlane(1, PD(0,1,0,0), rojo, {1});
+	Plano ceilingPlane(1, PD(0,-1,0,0), rojo, {1});
+	Plano backPlane(1, PD(0,0,-1,0), blanco, {1});
 	
 	
 	Emision emisionEsferaLeft = {0.8,0.6,0.9};
-	Esfera leftEsfera(PD(-0.5,-0.7,0.25,1), 0.3, emisionEsferaLeft);
-	Emision emisionEsferaRight = {0.5,0.9,0.9};
+	Esfera leftEsfera(PD(-0.5,-0.7,0.25,1), 0.3, emisionEsferaLeft, {1});
 	Monolito rightMonolito(
 		PD(0.5,-0.7,-0.25,1),
 		PD(0.2,0,0,0), PD(0,0.6,0,0), PD(0,0,0.05,0),
-		{0,0,0});
+		{0,0,0}, {1});
 	
 	escena.primitivas.push_back(&leftPlane);
 	escena.primitivas.push_back(&rightPlane);
@@ -54,8 +53,8 @@ int main() {
 	escena.primitivas.push_back(&leftEsfera);
 	escena.primitivas.push_back(&rightMonolito);
 
-	// Falta añadir la luz puntual a la escena
-	LuzPunto=(0,0.5,0) 
+	LuzPuntual luz(PD(0,0.5,0,1), {1.0,1.0,1.0});
+	escena.lucesPuntuales.push_back(&luz);
 
 	
 	// Emision em={0.2,0.3,0.9};

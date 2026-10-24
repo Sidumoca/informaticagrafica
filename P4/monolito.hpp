@@ -15,6 +15,7 @@ public:
 
 	Monolito(PD centro, PD i, PD j, PD k, Emision emisionIn, Reflectancia reflectanciaIn);
 	bool intersecta(Ray ray, PD& puntoInterseccionOut) const override;
+	PD getNormal(const PD& punto) const override;
 }; 
 
 #endif // MONOLITO_HPP
