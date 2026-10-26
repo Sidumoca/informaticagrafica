@@ -31,15 +31,17 @@ bool Ray::intersecta(Escena escena, PD& puntoInterseccionOut, Emision& emisionOu
 	emisionOut.g = 0;
 	emisionOut.b = 0;
 	PD puntoInterseccionTemp;
+	PD normal, normalAux;
 	Primitiva* primitivaCercana;
 
 	for (const auto& primitiva : escena.primitivas) {
-		if (primitiva->intersecta(*this, puntoInterseccionTemp)) {
+		if (primitiva->intersecta(*this, puntoInterseccionTemp, normalAux)) {
 			float distancia = (puntoInterseccionTemp - origen).module();
 			if (distancia < distanciaMinima) {
 				distanciaMinima = distancia;
 				primitivaCercana = primitiva;
 				puntoInterseccionOut = puntoInterseccionTemp;
+				normal = normalAux;
 				interseccionEncontrada = true;
 			}
 		}
@@ -48,7 +50,6 @@ bool Ray::intersecta(Escena escena, PD& puntoInterseccionOut, Emision& emisionOu
 	if(interseccionEncontrada){
 		Emision emLuz = {0,0,0};
 
-		PD normal = primitivaCercana -> getNormal(puntoInterseccionOut);
 		if(normal.dot(this->direccion) > 0) { //si esta mirando hacia el otro lado
 			normal = normal * -1.0;
 		}
@@ -61,9 +62,10 @@ bool Ray::intersecta(Escena escena, PD& puntoInterseccionOut, Emision& emisionOu
 			Ray rayoSombra(puntoInterseccionOut + normal * 0.00001f, wi);
 			bool enSombra = false;
 			PD puntoInterseccionRayoSombra;
+			PD auxNormal;
 
 			for (const auto& primitiva : escena.primitivas) {
-				if (primitiva->intersecta(rayoSombra, puntoInterseccionRayoSombra)) {
+				if (primitiva->intersecta(rayoSombra, puntoInterseccionRayoSombra, auxNormal)) {
 					float distObstaculo = (puntoInterseccionRayoSombra - rayoSombra.origen).module();
 					if (distObstaculo < dist) {
 						enSombra = true;

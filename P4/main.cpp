@@ -42,7 +42,7 @@ int main() {
 	Esfera leftEsfera(PD(-0.5,-0.7,0.25,1), 0.3, emisionEsferaLeft, {1});
 	Monolito rightMonolito(
 		PD(0.5,-0.7,-0.25,1),
-		PD(0.2,0,0,0), PD(0,0.6,0,0), PD(0,0,0.05,0),
+		PD(0.3,0,0,0), PD(0,0.65,0,0), PD(0,0,0.1,0),
 		{0,0,0}, {1});
 	
 	escena.primitivas.push_back(&leftPlane);

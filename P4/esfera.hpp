@@ -11,7 +11,7 @@ public:
 	float radio;
 
 	Esfera(PD centroIn, float radioIn, Emision emisionIn, Reflectancia reflectanciaIn);
-	bool intersecta(Ray ray, PD& puntoInterseccionOut) const override;
+	bool intersecta(Ray ray, PD& puntoInterseccionOut, PD& normalOut) const override;
 	PD getNormal(const PD& punto) const override;
 }; 
 

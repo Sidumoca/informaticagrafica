@@ -17,7 +17,7 @@ class Primitiva {
         Reflectancia reflectancia;
 
         explicit Primitiva(Emision emisionIn, Reflectancia reflectanciaIn):emision(emisionIn), reflectancia(reflectanciaIn)  {}; 
-        virtual bool intersecta(Ray ray, PD& puntoInterseccionOut) const = 0;
+        virtual bool intersecta(Ray ray, PD& puntoInterseccionOut, PD& normalOut) const = 0;
         virtual PD getNormal(const PD& punto) const = 0;
 
 		virtual ~Primitiva() = default;

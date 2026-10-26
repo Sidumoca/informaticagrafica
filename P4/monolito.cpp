@@ -23,7 +23,7 @@ Monolito::Monolito(PD c, PD i, PD j, PD k, Emision emisionIn, Reflectancia refle
 }
 
 	
-bool Monolito::intersecta(Ray ray, PD& puntoInterseccionOut) const{
+bool Monolito::intersecta(Ray ray, PD& puntoInterseccionOut, PD& normalOut) const{
 	PD aux = ray.origen - centro;
 	//TODO: quizas añadir soporte a todo tipo de paralelepipedo y no solo rectangulo, o al menos comprobar que i,j,k son paralelos
 	const float origen[3] = {
@@ -40,6 +40,11 @@ bool Monolito::intersecta(Ray ray, PD& puntoInterseccionOut) const{
 	float tmin = -numeric_limits<float>::infinity();
 	float tmax = numeric_limits<float>::infinity();
 
+	int ejeMin = 0;
+    float signoMin = 0.0f;
+    int ejeMax = 0;
+    float signoMax = 0.0f;
+
 	for (int eje = 0; eje < 3; ++eje) {
 		if (abs(direccion[eje]) < 1e-6f) {
 			if (abs(origen[eje]) > 1.0f) return false; //si es paralelo y esta fuera, no hay choque
@@ -48,21 +53,49 @@ bool Monolito::intersecta(Ray ray, PD& puntoInterseccionOut) const{
 
 		float t1 = (-1.0f - origen[eje]) / direccion[eje];
 		float t2 = ( 1.0f - origen[eje]) / direccion[eje];
-		if (t1 > t2) swap(t1, t2);
+		float s1 = -1.0f; //normal hacia -u
+		float s2 = 1.0f; //normal hacia u
 
-		tmin = max(tmin, t1); //la entrada mas rande
-		tmax = min(tmax, t2); //la salida mas pequeña
+		if (t1 > t2) {
+			swap(t1, t2);
+			swap(s1, s2);
+		}
+
+		if(t1 > tmin) {
+			tmin = t1;
+			ejeMin = eje;
+			signoMin = s1;
+		}
+		if(t2 < tmax){
+			tmax = t2;
+			ejeMax = eje;
+			signoMax = s2;
+		}
+
 		if (tmin > tmax) return false;
 	}
 
 	if (tmax < 1e-6f) return false; //monolito detras del rayo
 
-	//si tmin <0 el rayo sale de dentro, la salida tmax es el primer punto de contacto
-	float tHit = (tmin >= 0) ? tmin : tmax;
+	float tHit;
+    int ejeHit;
+    float signoHit;
 
-	//no se compara con 0 por si el rayo saliera directamente de la superficie del monolito
+    if (tmin >= 1e-4f) { //no comparo con 0 para que no se choque consigo mismo un rayo que salga de la superficie
+        //impacto exterior normal
+        tHit = tmin;
+        ejeHit = ejeMin;
+        signoHit = signoMin;
+    } else {
+        //si sale de dentro
+        tHit = tmax;
+        ejeHit = ejeMax;
+        signoHit = signoMax;
+    }
 
 	puntoInterseccionOut = ray.origen + ray.direccion * tHit;
+	const PD ejes[3] = { uI, uJ, uK };
+	normalOut = ejes[ejeHit] * signoHit;
 	return true;
 }
 
