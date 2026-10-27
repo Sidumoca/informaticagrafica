@@ -23,7 +23,7 @@ Monolito::Monolito(PD c, PD i, PD j, PD k, Emision emisionIn, Reflectancia refle
 }
 
 	
-bool Monolito::intersecta(Ray ray, PD& puntoInterseccionOut, PD& normalOut) const{
+bool Monolito::intersecta(const Ray& ray, PD& puntoInterseccionOut, PD& normalOut) const{
 	PD aux = ray.origen - centro;
 	//TODO: quizas añadir soporte a todo tipo de paralelepipedo y no solo rectangulo, o al menos comprobar que i,j,k son paralelos
 	const float origen[3] = {
@@ -81,7 +81,7 @@ bool Monolito::intersecta(Ray ray, PD& puntoInterseccionOut, PD& normalOut) cons
     int ejeHit;
     float signoHit;
 
-    if (tmin >= 1e-4f) { //no comparo con 0 para que no se choque consigo mismo un rayo que salga de la superficie
+    if (tmin >= 0) { //(al final si lo hago, esta solucionado en ray.cpp para todos) no comparo con 0 para que no se choque consigo mismo un rayo que salga de la superficie
         //impacto exterior normal
         tHit = tmin;
         ejeHit = ejeMin;
@@ -97,24 +97,4 @@ bool Monolito::intersecta(Ray ray, PD& puntoInterseccionOut, PD& normalOut) cons
 	const PD ejes[3] = { uI, uJ, uK };
 	normalOut = ejes[ejeHit] * signoHit;
 	return true;
-}
-
-PD Monolito::getNormal(const PD& punto) const{
-	PD aux = punto - centro;
-
-	//proyeccion espacio local
-	float cI = aux.dot(uI) / mediaLen[0];
-    float cJ = aux.dot(uJ) / mediaLen[1];
-    float cK = aux.dot(uK) / mediaLen[2];
-
-	//Segun con que cara ha chocado devolvemos una normal u otra
-	if (abs(cI) >= abs(cJ) && abs(cI) >= abs(cK)) {
-        return (cI > 0) ? uI : (uI * -1.0f);
-    } 
-    else if (abs(cJ) >= abs(cI) && abs(cJ) >= abs(cK)) {
-        return (cJ > 0) ? uJ : (uJ * -1.0f);
-    } 
-    else {
-        return (cK > 0) ? uK : (uK * -1.0f);
-    }
 }

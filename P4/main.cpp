@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <iostream>
+#include "triangulo.hpp"
 #include "esfera.hpp"
 #include "monolito.hpp"
 #include "plano.hpp"
@@ -44,6 +45,9 @@ int main() {
 		PD(0.5,-0.7,-0.25,1),
 		PD(0.3,0,0,0), PD(0,0.65,0,0), PD(0,0,0.1,0),
 		{0,0,0}, {1});
+
+	Emision emisionTriangulo = {0.5,0.9,0.9};
+	Triangulo triangulo(PD(-0.2,0,0,1),PD(0,0.2,0.1,1),PD(0.2,0,0,1),emisionTriangulo, {1});
 	
 	escena.primitivas.push_back(&leftPlane);
 	escena.primitivas.push_back(&rightPlane);
@@ -52,6 +56,7 @@ int main() {
 	escena.primitivas.push_back(&backPlane);
 	escena.primitivas.push_back(&leftEsfera);
 	escena.primitivas.push_back(&rightMonolito);
+	escena.primitivas.push_back(&triangulo);
 
 	LuzPuntual luz(PD(0,0.5,0,1), {1.0,1.0,1.0});
 	escena.lucesPuntuales.push_back(&luz);

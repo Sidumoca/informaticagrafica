@@ -9,7 +9,7 @@ Plano::Plano(float distanciaIn, PD normalIn, Emision emisionIn, Reflectancia ref
     this->normal = normalIn/normalIn.module();
 }
 
-bool Plano::intersecta(Ray ray, PD& puntoInterseccionOut, PD& normalOut) const{
+bool Plano::intersecta(const Ray& ray, PD& puntoInterseccionOut, PD& normalOut) const{
     bool hay_interseccion=false;
     if(normal.dot(ray.direccion)!=0){
         PD origenVector(ray.origen[0], ray.origen[1], ray.origen[2], 0); // convertir origen en vector para esta operación
@@ -21,8 +21,4 @@ bool Plano::intersecta(Ray ray, PD& puntoInterseccionOut, PD& normalOut) const{
     }
     normalOut = this->normal;
     return hay_interseccion;
-}
-
-PD Plano::getNormal(const PD& punto) const{
-    return this->normal;
 }

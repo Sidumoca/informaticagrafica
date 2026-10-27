@@ -11,8 +11,7 @@ public:
     PD normal;
 
 	Plano(float distanciaIn, PD normalIn, Emision emisionIn, Reflectancia reflectanciaIn);
-	bool intersecta(Ray ray, PD& puntoInterseccionOut, PD& normalOut) const override;
-	PD getNormal(const PD& punto) const override;
+	bool intersecta(const Ray& ray, PD& puntoInterseccionOut, PD& normalOut) const override;
 }; 
 
 #endif // PLANO_HPP

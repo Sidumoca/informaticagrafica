@@ -8,7 +8,7 @@ Esfera::Esfera(PD centroIn, float radioIn, Emision emisionIn, Reflectancia refle
 { if(!centroIn.isPoint()) std::cerr << "El centro de la esfera debe ser un punto" << std::endl; }
 
 	
-bool Esfera::intersecta(Ray ray, PD& puntoInterseccionOut, PD& normalOut) const{
+bool Esfera::intersecta(const Ray& ray, PD& puntoInterseccionOut, PD& normalOut) const{
 	PD aux = (ray.origen - this->centro);
 	float a = 1; //t^2*|d^2| //modulo de d al cuadrado, es unitario asi que 1
 	float b = 2*(ray.direccion.dot(aux)); // 2td · (o-c)
@@ -31,7 +31,3 @@ bool Esfera::intersecta(Ray ray, PD& puntoInterseccionOut, PD& normalOut) const{
 	
 }
 
-PD Esfera::getNormal(const PD& punto) const{
-	PD aux = punto - this->centro;
-    return aux/aux.module();
-}

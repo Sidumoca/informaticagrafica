@@ -20,6 +20,7 @@ ray.cpp
 image.cpp
 camara.cpp
 monolito.cpp
+triangulo.cpp
 )
 
 target_link_libraries(main PRIVATE Eigen3::Eigen PNG::PNG OpenEXR::OpenEXR OpenMP::OpenMP_CXX)
