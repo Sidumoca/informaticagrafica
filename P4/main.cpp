@@ -30,9 +30,8 @@ int main(int argc, char* argv[]) {
 	json data = json::parse(f);
 	
 	Escena escena;
-
-	int raysPerPixel = 32;
-
+	
+	
 	PD origenCamara(
 		data["camara"]["origen"]["x"].get<float>(),
 		data["camara"]["origen"]["y"].get<float>(),
@@ -59,7 +58,8 @@ int main(int argc, char* argv[]) {
 	);
 	int width = data["camara"]["width"].get<int>();
 	int height = data["camara"]["height"].get<int>();
-
+	int raysPerPixel = data["camara"]["raysPerPixel"].get<int>();
+	
 	for(const auto& object : data["primitivas"]){
 		std::string type = object["type"];
 

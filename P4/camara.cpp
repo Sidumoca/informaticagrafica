@@ -67,9 +67,9 @@ void Camara::imprimirImagen(const char *path){
 	Image im(this->width, this->height, true);
 
 	#pragma omp parallel for collapse(2) schedule(dynamic, 64)
-	for(int j=0;j<this->width;++j){ //al reves porque en image se guarda height en el bucle de fuera
-		for(int i=0;i<this->height;++i){
-			Emision emision = this->generateKRays(i,j, this->raysPerPixel); //TODO: añadir parametro k
+	for(int j=0;j<this->height;++j){
+		for(int i=0;i<this->width;++i){
+			Emision emision = this->generateKRays(i,j, this->raysPerPixel);
 			im.image[j][i].r = emision.r;
 			im.image[j][i].g = emision.g;
 			im.image[j][i].b = emision.b;
