@@ -1,7 +1,7 @@
 #ifndef LUZ_PUNTUAL_HPP
 #define LUZ_PUNTUAL_HPP
 
-#include "pd.hpp"
+#include "geometria/pd.hpp"
 #include <iostream>
 
 using namespace std;

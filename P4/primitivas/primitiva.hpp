@@ -1,8 +1,8 @@
 #ifndef PRIMITIVA_HPP
 #define PRIMITIVA_HPP
 
-#include "pd.hpp"
-#include "image.hpp"
+#include "../geometria/pd.hpp"
+#include "../image.hpp"
 
 class Ray; // Declaración adelantada porque sino hay dependencia circular.
 

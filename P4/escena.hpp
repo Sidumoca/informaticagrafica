@@ -2,19 +2,17 @@
 #define ESCENA_HPP
 
 #include <vector>
+#include <memory>
 
-#include "primitiva.hpp"
+#include "primitivas/primitiva.hpp"
 #include "luzPuntual.hpp"
 
 class Escena{
     public:
-        std::vector<Primitiva*> primitivas;
-        std::vector<LuzPuntual*> lucesPuntuales;
+        std::vector<std::unique_ptr<Primitiva>> primitivas;
+        std::vector<std::unique_ptr<LuzPuntual>> lucesPuntuales;
         Escena() = default;
-        ~Escena(){
-			primitivas.clear();
-			lucesPuntuales.clear();
-		} //Hacer que borre todos los punteros de los vectores
+        ~Escena() = default;
 };
 
 #endif // ESCENA_HPP

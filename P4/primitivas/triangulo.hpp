@@ -2,8 +2,8 @@
 #define TRIANGULO_HPP
 
 #include "primitiva.hpp"
-#include "pd.hpp"
-#include "ray.hpp"
+#include "../geometria/pd.hpp"
+#include "../geometria/ray.hpp"
 
 class Triangulo : public Primitiva {
 public:

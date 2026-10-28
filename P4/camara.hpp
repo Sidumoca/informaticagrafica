@@ -1,14 +1,14 @@
 #ifndef CAMARA_HPP
 #define CAMARA_HPP
 
-#include "pd.hpp"
+#include "geometria/pd.hpp"
 #include "image.hpp"
 #include "escena.hpp"
 #include <vector>
 
 class Camara {
 	public:
-		Camara(PD origenIn, PD leftIn, PD upIn, PD forwardIn, int widthIn, int heightIn, Escena escenaIn,  int raysPerPixelIn);
+		Camara(PD origenIn, PD leftIn, PD upIn, PD forwardIn, int widthIn, int heightIn, const Escena& escenaIn,  int raysPerPixelIn);
 		PD origen; 
 		PD left; 
 		PD up; 
@@ -22,7 +22,7 @@ class Camara {
 		PD uLeft;
 		PD uUp;
 
-		Escena escena;
+		const Escena& escena;
 		int raysPerPixel;
 
 		Emision generateRay(int i, int j, float multiplierX, float multiplierY);

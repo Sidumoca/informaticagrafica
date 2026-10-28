@@ -24,7 +24,7 @@ Ray::Ray(PD origenIn, PD direccionIn)
 	}
 }
 
-bool Ray::intersecta(Escena escena, PD& puntoInterseccionOut, Emision& emisionOut) const{
+bool Ray::intersecta(const Escena& escena, PD& puntoInterseccionOut, Emision& emisionOut) const{
 	bool interseccionEncontrada = false;
 	float distanciaMinima = numeric_limits<float>::max(); //maximo posible valor en floats
 	emisionOut.r = 0;
@@ -32,14 +32,14 @@ bool Ray::intersecta(Escena escena, PD& puntoInterseccionOut, Emision& emisionOu
 	emisionOut.b = 0;
 	PD puntoInterseccionTemp;
 	PD normal, normalAux;
-	Primitiva* primitivaCercana;
+	const Primitiva* primitivaCercana = nullptr;
 
 	for (const auto& primitiva : escena.primitivas) {
 		if (primitiva->intersecta(*this, puntoInterseccionTemp, normalAux)) {
 			float distancia = (puntoInterseccionTemp - origen).module();
 			if (distancia < distanciaMinima) {
 				distanciaMinima = distancia;
-				primitivaCercana = primitiva;
+				primitivaCercana = primitiva.get();
 				puntoInterseccionOut = puntoInterseccionTemp;
 				normal = normalAux;
 				interseccionEncontrada = true;

@@ -1,19 +1,20 @@
 #include "camara.hpp"
-#include "ray.hpp"
+#include "geometria/ray.hpp"
 #include <iostream>
 #include <random>
 #include <omp.h>
 
 using namespace std;
 
-Camara::Camara(PD origenIn, PD leftIn, PD upIn, PD forwardIn, int widthIn, int heightIn, Escena escenaIn, int raysPerPixelIn){
+Camara::Camara(PD origenIn, PD leftIn, PD upIn, PD forwardIn, int widthIn, int heightIn, const Escena& escenaIn, int raysPerPixelIn)
+	: escena(escenaIn)
+{
 	this->origen=origenIn;
 	this->left=leftIn;
 	this->up=upIn;
 	this->forward=forwardIn;
 	this->width=widthIn;
 	this->height=heightIn;
-	this->escena=escenaIn;
 	this->raysPerPixel=raysPerPixelIn;
 
 	//precalculamos cositas

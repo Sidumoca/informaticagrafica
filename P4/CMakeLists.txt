@@ -13,14 +13,14 @@ find_package(OpenMP REQUIRED)
 
 add_executable(main
 main.cpp
-pd.cpp
-plano.cpp
-esfera.cpp
-ray.cpp
+geometria/pd.cpp
+primitivas/plano.cpp
+primitivas/esfera.cpp
+geometria/ray.cpp
 image.cpp
 camara.cpp
-monolito.cpp
-triangulo.cpp
+primitivas/monolito.cpp
+primitivas/triangulo.cpp
 )
 
 target_link_libraries(main PRIVATE Eigen3::Eigen PNG::PNG OpenEXR::OpenEXR OpenMP::OpenMP_CXX)

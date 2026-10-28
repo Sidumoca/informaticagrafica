@@ -2,8 +2,8 @@
 #define PLANO_HPP
 
 #include "primitiva.hpp"
-#include "pd.hpp"
-#include "ray.hpp"
+#include "../geometria/pd.hpp"
+#include "../geometria/ray.hpp"
 
 class Plano : public Primitiva {
 public:
