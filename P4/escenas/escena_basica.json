@@ -21,7 +21,8 @@
       "z": 3
     },
     "width": 512,
-    "height": 512
+    "height": 512,
+    "raysPerPixel": 50
   },
   "primitivas": [
     {

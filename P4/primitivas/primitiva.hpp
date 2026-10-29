@@ -7,7 +7,12 @@
 class Ray; // Declaración adelantada porque sino hay dependencia circular.
 
 struct Reflectancia {
-    float kd;
+    Emision kd;
+    float kdPorcentaje;
+    Emision ks;
+    float ksPorcentaje;
+    Emision kt;
+    float ktPorcentaje;
 };
 
 //Clase Abstracta
@@ -15,6 +20,8 @@ class Primitiva {
     public:
         Emision emision;
         Reflectancia reflectancia;
+        
+        bool esEmisiva;
 
         explicit Primitiva(Emision emisionIn, Reflectancia reflectanciaIn):emision(emisionIn), reflectancia(reflectanciaIn)  {}; 
         virtual bool intersecta(const Ray& ray, PD& puntoInterseccionOut, PD& normalOut) const = 0;

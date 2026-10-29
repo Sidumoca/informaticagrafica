@@ -24,7 +24,29 @@ Ray::Ray(PD origenIn, PD direccionIn)
 	}
 }
 
-bool Ray::intersecta(const Escena& escena, PD& puntoInterseccionOut, Emision& emisionOut) const{
+Emision BRDF(Reflectancia reflectancia){
+	return reflectancia.kd / M_PI;
+}
+
+Ray Ray::calcularRayoAleatorio(const Escena& escena, const PD& puntoInterseccion, float inclinacion, float azimut){
+	//pasar al rango correcto
+
+	PD u = eje / moduloEje; // u es vector unitario del eje
+	PD dirCiudadEcuador = dirCiudad - (dirCiudad.dot(u))*u; // altura de la ciudad respecto al ecuador
+	PD v = dirCiudadEcuador / dirCiudadEcuador.module(); // convertir en vector unitario
+	PD w = u.cross(v); // producto vectorial para sacar la tercera componente
+
+	PD x = u*cos(inclinacion)*radio;
+	PD y = v*sin(inclinacion)*cos(azimut)*radio;
+	PD z = w*sin(inclinacion)*sin(azimut)*radio;
+
+	this->estacion = centro + x + y + z;
+}
+
+bool Ray::intersecta(const Escena& escena, PD& puntoInterseccionOut, Emision& emisionOut, unsigned rebotesRestantes = 5) const{
+	if rebotesRestantes <= 0 return false;
+	
+	
 	bool interseccionEncontrada = false;
 	float distanciaMinima = numeric_limits<float>::max(); //maximo posible valor en floats
 	emisionOut.r = 0;
@@ -34,6 +56,7 @@ bool Ray::intersecta(const Escena& escena, PD& puntoInterseccionOut, Emision& em
 	PD normal, normalAux;
 	const Primitiva* primitivaCercana = nullptr;
 
+	//calculo la interseccion ---------------------------
 	for (const auto& primitiva : escena.primitivas) {
 		if (primitiva->intersecta(*this, puntoInterseccionTemp, normalAux)) {
 			float distancia = (puntoInterseccionTemp - origen).module();
@@ -47,6 +70,7 @@ bool Ray::intersecta(const Escena& escena, PD& puntoInterseccionOut, Emision& em
 		}
 	}
 
+	//calculo rayos de sombra ----------------------------------
 	if(interseccionEncontrada){
 		Emision emLuz = {0,0,0};
 
@@ -78,10 +102,21 @@ bool Ray::intersecta(const Escena& escena, PD& puntoInterseccionOut, Emision& em
 				float coseno = abs(normal.dot(wi)); //el coseno (tercera parte)
 				float reduccionDistancia = 1.0 / (dist* dist); //1/dist^2
 
-				emLuz = emLuz + ((luzPuntual->emision * reduccionDistancia) * (primitivaCercana->emision / M_PI) * coseno);
+				emLuz = emLuz + ((luzPuntual->emision * reduccionDistancia) * BRDF(primitivaCercana->reflectancia) * coseno);
 			}
 		}
-		emisionOut = emLuz;
+
+		PD w2 = calcularRayoAleatorio(escena, puntoInterseccionOut, );
+
+		PD puntoInterseccionAux;
+		Emision luzIndirecta = {0,0,0};
+		if(w2.intersecta(escena, puntoInterseccionAux, luzIndirecta, rebotesRestantes-1)){
+			float coseno = abs(normal.dot(w2));
+			
+			luzIndirecta = luzIndirecta * coseno* BRDF(primitivaCercana->reflectancia);
+		}
+
+		emisionOut = emLuz + luzIndirecta;
 	}
 	return interseccionEncontrada;
 }
