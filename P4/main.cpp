@@ -19,6 +19,27 @@
 
 using nlohmann::json;
 
+Emision leerEmision(const json& object) {
+    return {0.0f, 0.0f, 0.0f};
+}
+
+Reflectancia leerReflectancia(const json& object) {
+    Emision kd{
+        object["emision"]["r"].get<float>(),
+        object["emision"]["g"].get<float>(),
+        object["emision"]["b"].get<float>()
+    };
+
+    return Reflectancia{
+        kd,                         // kd
+        0.0f,                       // kdPorcentaje
+        {0.0f, 0.0f, 0.0f},         // ks
+        0.0f,                       // ksPorcentaje
+        {0.0f, 0.0f, 0.0f},         // kt
+        0.0f                        // ktPorcentaje
+    };
+}
+
 int main(int argc, char* argv[]) {
 
 	if (argc < 2) {
@@ -84,12 +105,8 @@ int main(int argc, char* argv[]) {
 						object["p3"]["z"].get<float>(),
 						1
 					),
-					Emision{
-						object["emision"]["r"].get<float>(),
-						object["emision"]["g"].get<float>(),
-						object["emision"]["b"].get<float>()
-					},
-					Reflectancia{1}
+					leerEmision(object),
+					leerReflectancia(object)
 				)
 			);
 		} else if(type == "esfera"){
@@ -102,12 +119,8 @@ int main(int argc, char* argv[]) {
 						1
 					),
 					object["radio"].get<float>(),
-					Emision{
-						object["emision"]["r"].get<float>(),
-						object["emision"]["g"].get<float>(),
-						object["emision"]["b"].get<float>()
-					},
-					Reflectancia{1}
+					leerEmision(object),
+					leerReflectancia(object)
 				)
 			);
 		} else if(type == "monolito"){
@@ -137,12 +150,8 @@ int main(int argc, char* argv[]) {
 						object["k"]["z"].get<float>(),
 						0
 					),
-					Emision{
-						object["emision"]["r"].get<float>(),
-						object["emision"]["g"].get<float>(),
-						object["emision"]["b"].get<float>()
-					},
-					Reflectancia{1}
+					leerEmision(object),
+					leerReflectancia(object)
 				)
 			);
 		} else if(type == "plano"){
@@ -155,12 +164,8 @@ int main(int argc, char* argv[]) {
 						object["normal"]["z"].get<float>(),
 						0
 					),
-					Emision{
-						object["emision"]["r"].get<float>(),
-						object["emision"]["g"].get<float>(),
-						object["emision"]["b"].get<float>()
-					},
-					Reflectancia{1}
+					leerEmision(object),
+					leerReflectancia(object)
 				)
 			);
 		} else {

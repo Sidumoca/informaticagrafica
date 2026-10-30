@@ -1,5 +1,6 @@
 #include "ray.hpp"
 #include <limits>
+#include <random>
 #include <cmath>
 #include <math.h>
 #include <iostream>
@@ -28,8 +29,25 @@ Emision BRDF(Reflectancia reflectancia){
 	return reflectancia.kd / M_PI;
 }
 
-Ray Ray::calcularRayoAleatorio(const Escena& escena, const PD& puntoInterseccion, float inclinacion, float azimut){
-	//pasar al rango correcto
+Ray Ray::calcularRayoAleatorio(const Escena& escena, const PD& puntoInterseccion, const PD& normal){
+	static thread_local std::mt19937 generator(
+        std::random_device{}()
+    );
+
+	std::uniform_real_distribution<float> distribution(0.0f, 1.0f);
+
+
+	//pasar al rango correcto, con el angulo solido
+    float inclinacion = acos(distribution(generator));
+    float azimut = 2.0 * M_PI * distribution(generator);
+
+	// Se usa sqrt(1 - cos^2(theta)) por la identidad sin^2(theta) + cos^2(theta) = 1,
+	// evitando calcular el seno directamente; aquí debe usarse el coseno muestreado
+	float senoInclinacion = sqrt(1.0 - inclinacion * inclinacion); 
+
+	PD direccionEnLocal( senoInclinacion * cos(azimut), )
+
+
 
 	PD u = eje / moduloEje; // u es vector unitario del eje
 	PD dirCiudadEcuador = dirCiudad - (dirCiudad.dot(u))*u; // altura de la ciudad respecto al ecuador
@@ -106,7 +124,7 @@ bool Ray::intersecta(const Escena& escena, PD& puntoInterseccionOut, Emision& em
 			}
 		}
 
-		PD w2 = calcularRayoAleatorio(escena, puntoInterseccionOut, );
+		PD w2 = calcularRayoAleatorio(escena, puntoInterseccionOut, normal);
 
 		PD puntoInterseccionAux;
 		Emision luzIndirecta = {0,0,0};
