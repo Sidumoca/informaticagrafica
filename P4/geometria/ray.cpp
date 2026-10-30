@@ -83,7 +83,7 @@ bool Ray::intersecta(const Escena& escena, PD& puntoInterseccionOut, Emision& em
 			float dist = direccionLuz.module();
 			PD wi= direccionLuz / dist; //normalizo
 
-			Ray rayoSombra(puntoInterseccionOut + normal * 0.00001f, wi);
+			Ray rayoSombra(puntoInterseccionOut + normal * 0.001f, wi);
 			bool enSombra = false;
 			PD puntoInterseccionRayoSombra;
 			PD auxNormal;
