@@ -126,6 +126,7 @@ float PD::dot(const PD& other) const
         return v1.dot(v2);
     }
 	std::cerr << "El producto escalar solo esta definido entre direcciones" << std::endl;
+    return 0.0f; //devuelve cualquier cosa
 }
 
 
@@ -146,6 +147,7 @@ PD PD::cross(const PD& other) const
         );
     }
 	std::cerr << "El producto vectorial solo esta definido entre direcciones" << std::endl;
+    return PD(); //devuelve direccion nula cualquiera
 }
 
 

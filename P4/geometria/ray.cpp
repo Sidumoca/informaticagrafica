@@ -29,40 +29,46 @@ Emision BRDF(Reflectancia reflectancia){
 	return reflectancia.kd / M_PI;
 }
 
-Ray Ray::calcularRayoAleatorio(const Escena& escena, const PD& puntoInterseccion, const PD& normal){
-	static thread_local std::mt19937 generator(
-        std::random_device{}()
-    );
+Ray calcularRayoAleatorio(const PD& puntoInterseccion, const PD& normal) {
+    static thread_local std::mt19937 generator(random_device{}());
 
-	std::uniform_real_distribution<float> distribution(0.0f, 1.0f);
+    uniform_real_distribution<float> distribution(0.0f, 1.0f);
 
+    const float u1 = distribution(generator);
+    const float u2 = distribution(generator);
 
-	//pasar al rango correcto, con el angulo solido
-    float inclinacion = acos(distribution(generator));
-    float azimut = 2.0 * M_PI * distribution(generator);
+    const float cosTheta = u1;
+    const float sinTheta =
+        sqrt(1.0f - cosTheta * cosTheta);
 
-	// Se usa sqrt(1 - cos^2(theta)) por la identidad sin^2(theta) + cos^2(theta) = 1,
-	// evitando calcular el seno directamente; aquí debe usarse el coseno muestreado
-	float senoInclinacion = sqrt(1.0 - inclinacion * inclinacion); 
+    const float phi =
+        2.0f * static_cast<float>(M_PI) * u2;
 
-	PD direccionEnLocal( senoInclinacion * cos(azimut), )
+    PD n = normal / normal.module();
 
+    PD referencia;
+    if (abs(n[0]) < 0.9f) {
+        referencia = PD(1.0f, 0.0f, 0.0f, 0.0f);
+    } else {
+        referencia = PD(0.0f, 1.0f, 0.0f, 0.0f);
+    }
 
+    PD t = referencia.cross(n);
+    t = t / t.module();
 
-	PD u = eje / moduloEje; // u es vector unitario del eje
-	PD dirCiudadEcuador = dirCiudad - (dirCiudad.dot(u))*u; // altura de la ciudad respecto al ecuador
-	PD v = dirCiudadEcuador / dirCiudadEcuador.module(); // convertir en vector unitario
-	PD w = u.cross(v); // producto vectorial para sacar la tercera componente
+    PD b = n.cross(t);
+    b = b / b.module();
 
-	PD x = u*cos(inclinacion)*radio;
-	PD y = v*sin(inclinacion)*cos(azimut)*radio;
-	PD z = w*sin(inclinacion)*sin(azimut)*radio;
+    PD direccion =
+          t * (sinTheta * cos(phi))
+        + b * (sinTheta * sin(phi))
+        + n * cosTheta;
 
-	this->estacion = centro + x + y + z;
+    return Ray( puntoInterseccion + n * 0.001f, direccion);
 }
 
-bool Ray::intersecta(const Escena& escena, PD& puntoInterseccionOut, Emision& emisionOut, unsigned rebotesRestantes = 5) const{
-	if rebotesRestantes <= 0 return false;
+bool Ray::intersecta(const Escena& escena, PD& puntoInterseccionOut, Emision& emisionOut, unsigned rebotesRestantes) const{
+	if(rebotesRestantes <= 0) return false;
 	
 	
 	bool interseccionEncontrada = false;
@@ -75,10 +81,10 @@ bool Ray::intersecta(const Escena& escena, PD& puntoInterseccionOut, Emision& em
 	const Primitiva* primitivaCercana = nullptr;
 
 	//calculo la interseccion ---------------------------
-	for (const auto& primitiva : escena.primitivas) {
-		if (primitiva->intersecta(*this, puntoInterseccionTemp, normalAux)) {
+	for(const auto& primitiva : escena.primitivas) {
+		if(primitiva->intersecta(*this, puntoInterseccionTemp, normalAux)) {
 			float distancia = (puntoInterseccionTemp - origen).module();
-			if (distancia < distanciaMinima) {
+			if(distancia < distanciaMinima) {
 				distanciaMinima = distancia;
 				primitivaCercana = primitiva.get();
 				puntoInterseccionOut = puntoInterseccionTemp;
@@ -90,13 +96,19 @@ bool Ray::intersecta(const Escena& escena, PD& puntoInterseccionOut, Emision& em
 
 	//calculo rayos de sombra ----------------------------------
 	if(interseccionEncontrada){
+
+		if(primitivaCercana->esEmisiva){
+			emisionOut = primitivaCercana->emision;
+			return true;
+		}
+
 		Emision emLuz = {0,0,0};
 
 		if(normal.dot(this->direccion) > 0) { //si esta mirando hacia el otro lado
 			normal = normal * -1.0;
 		}
 
-		for (const auto& luzPuntual : escena.lucesPuntuales) {
+		for(const auto& luzPuntual : escena.lucesPuntuales) {
 			PD direccionLuz = luzPuntual->posicion - puntoInterseccionOut;
 			float dist = direccionLuz.module();
 			PD wi= direccionLuz / dist; //normalizo
@@ -106,10 +118,10 @@ bool Ray::intersecta(const Escena& escena, PD& puntoInterseccionOut, Emision& em
 			PD puntoInterseccionRayoSombra;
 			PD auxNormal;
 
-			for (const auto& primitiva : escena.primitivas) {
-				if (primitiva->intersecta(rayoSombra, puntoInterseccionRayoSombra, auxNormal)) {
+			for(const auto& primitiva : escena.primitivas) {
+				if(primitiva->intersecta(rayoSombra, puntoInterseccionRayoSombra, auxNormal)) {
 					float distObstaculo = (puntoInterseccionRayoSombra - rayoSombra.origen).module();
-					if (distObstaculo < dist) {
+					if(distObstaculo < dist) {
 						enSombra = true;
 						break; //si hay algo antes de la luz
 					}
@@ -117,25 +129,25 @@ bool Ray::intersecta(const Escena& escena, PD& puntoInterseccionOut, Emision& em
 			}
 
 			if(!enSombra){
-				float coseno = abs(normal.dot(wi)); //el coseno (tercera parte)
+				float coseno = max(0.0f, normal.dot(wi)); //el coseno (tercera parte)
 				float reduccionDistancia = 1.0 / (dist* dist); //1/dist^2
 
 				emLuz = emLuz + ((luzPuntual->emision * reduccionDistancia) * BRDF(primitivaCercana->reflectancia) * coseno);
 			}
 		}
 
-		PD w2 = calcularRayoAleatorio(escena, puntoInterseccionOut, normal);
+		Ray w2 = calcularRayoAleatorio(puntoInterseccionOut, normal);
 
 		PD puntoInterseccionAux;
 		Emision luzIndirecta = {0,0,0};
 		if(w2.intersecta(escena, puntoInterseccionAux, luzIndirecta, rebotesRestantes-1)){
-			float coseno = abs(normal.dot(w2));
+			float coseno = max(0.0f, normal.dot(w2.direccion));
+			float pdf = 1.0f / (2.0f * static_cast<float>(M_PI)); //por lo de probabilidad uniforme
 			
-			luzIndirecta = luzIndirecta * coseno* BRDF(primitivaCercana->reflectancia);
+			luzIndirecta = (luzIndirecta * coseno* BRDF(primitivaCercana->reflectancia)) / pdf;
 		}
 
 		emisionOut = emLuz + luzIndirecta;
 	}
 	return interseccionEncontrada;
 }
-

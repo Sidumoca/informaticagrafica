@@ -3,7 +3,9 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <filesystem>
 #include <memory>
+#include <string>
 #include "primitivas/triangulo.hpp"
 #include "primitivas/esfera.hpp"
 #include "primitivas/monolito.hpp"
@@ -18,25 +20,30 @@
 #include "nlohmann/json.hpp"
 
 using nlohmann::json;
+namespace fs = std::filesystem;
+
+Emision leerColor(const json& object, const char* nombre) {
+    if (!object.contains(nombre)) {
+        return {0.0f, 0.0f, 0.0f};
+    }
+
+    const json& color = object.at(nombre);
+    return {
+        color.value("r", 0.0f),
+        color.value("g", 0.0f),
+        color.value("b", 0.0f)
+    };
+}
 
 Emision leerEmision(const json& object) {
-    return {0.0f, 0.0f, 0.0f};
+    return leerColor(object, "emision");
 }
 
 Reflectancia leerReflectancia(const json& object) {
-    Emision kd{
-        object["emision"]["r"].get<float>(),
-        object["emision"]["g"].get<float>(),
-        object["emision"]["b"].get<float>()
-    };
-
     return Reflectancia{
-        kd,                         // kd
-        0.0f,                       // kdPorcentaje
-        {0.0f, 0.0f, 0.0f},         // ks
-        0.0f,                       // ksPorcentaje
-        {0.0f, 0.0f, 0.0f},         // kt
-        0.0f                        // ktPorcentaje
+        leerColor(object, "kd"),
+        leerColor(object, "ks"),
+        leerColor(object, "kt")
     };
 }
 
@@ -192,5 +199,8 @@ int main(int argc, char* argv[]) {
 	}
 	
 	Camara camara(origenCamara, leftCamara, upCamara, forwardCamara, width, height, escena, raysPerPixel);
-	camara.imprimirImagen("test.png");
+	fs::create_directories("outputs");
+	fs::path ficheroEntrada(argv[1]);
+	fs::path rutaSalida = fs::path("outputs") / (ficheroEntrada.stem().string() + ".png");
+	camara.imprimirImagen(rutaSalida.c_str());
 }
