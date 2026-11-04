@@ -3,6 +3,8 @@
 
 #include "../geometria/pd.hpp"
 #include "../image.hpp"
+#include <algorithm>
+#include <iostream>
 
 class Ray; // Declaración adelantada porque sino hay dependencia circular.
 
@@ -19,24 +21,36 @@ struct Reflectancia {
         Emision ksIn = {0.0f, 0.0f, 0.0f},
         Emision ktIn = {0.0f, 0.0f, 0.0f}
     ) : kd(kdIn), ks(ksIn), kt(ktIn) {
-        const float kdPeso = luminancia(kd);
-        const float ksPeso = luminancia(ks);
-        const float ktPeso = luminancia(kt);
-        const float pesoTotal = kdPeso + ksPeso + ktPeso;
+        float sumaR = kd.r + ks.r + kt.r;
+        float sumaG = kd.g + ks.g + kt.g;
+        float sumaB = kd.b + ks.b + kt.b;
+        if(sumaR > 1.0f){
+            kd.r /= sumaR; ks.r /= sumaR; kt.r /= sumaR;
+            std::cerr << "Warning: La suma de rojos es mas de 1. Normalizando" << std::endl;
+        } 
+        if(sumaG > 1.0f){
+            kd.g /= sumaG; ks.g /= sumaG; kt.g /= sumaG;
+            std::cerr << "Warning: La suma de verdes es mas de 1. Normalizando" << std::endl;
+        } 
+        if(sumaB > 1.0f){
+            kd.b /= sumaB; ks.b /= sumaB; kt.b /= sumaB;
+            std::cerr << "Warning: La suma de azules es mas de 1. Normalizando" << std::endl;
+        } 
 
-        if (pesoTotal > 0.0f) {
-            kdPorcentaje = kdPeso / pesoTotal;
-            ksPorcentaje = ksPeso / pesoTotal;
-            ktPorcentaje = ktPeso / pesoTotal;
+        float maxKd = std::max({kd.r, kd.g, kd.b});
+        float maxKs = std::max({ks.r, ks.g, ks.b});
+        float maxKt = std::max({kt.r, kt.g, kt.b});
+        float totalMax = maxKd + maxKs + maxKt;
+
+        if(totalMax == 0.0f) {
+            kdPorcentaje = 0.0f;
+            ksPorcentaje = 0.0f;
+            ktPorcentaje = 0.0f;
+        } else {
+            kdPorcentaje = maxKd / totalMax;
+            ksPorcentaje = maxKs / totalMax;
+            ktPorcentaje = maxKt / totalMax;
         }
-    }
-
-private:
-    static float luminancia(const Emision& color) {
-        // Estos valores son los pesos estandarizados RGB para aproximar la
-        // luminancia percibida por el ojo humano: el verde aporta más y el
-        // azul menos a la percepción del brillo.
-        return 0.2126f * color.r + 0.7152f * color.g + 0.0722f * color.b;
     }
 };
 

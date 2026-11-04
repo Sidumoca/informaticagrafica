@@ -14,12 +14,7 @@ public:
 
     Ray(PD origenIn, PD direccionIn);
 
-    bool intersecta(
-        const Escena& escena,
-        PD& puntoInterseccionOut,
-        Emision& emisionOut,
-        unsigned rebotesRestantes = 5
-    ) const;
+    bool intersecta(const Escena& escena, PD& puntoInterseccionOut, Emision& emisionOut) const;
 };
 
 #endif // RAY_HPP

@@ -1,6 +1,7 @@
 #include "camara.hpp"
 #include "geometria/ray.hpp"
 #include <iostream>
+#include <iomanip>
 #include <random>
 #include <omp.h>
 
@@ -65,6 +66,8 @@ Emision Camara::generateKRays(int i, int j, int k){
 
 void Camara::imprimirImagen(const char *path){
 	Image im(this->width, this->height, true);
+	int pixelesProcesados = 0;
+    const int totalPixeles = this->width * this->height;
 
 	#pragma omp parallel for collapse(2) schedule(dynamic, 64)
 	for(int j=0;j<this->height;++j){
@@ -73,8 +76,20 @@ void Camara::imprimirImagen(const char *path){
 			im.image[j][i].r = emision.r;
 			im.image[j][i].g = emision.g;
 			im.image[j][i].b = emision.b;
+
+			int procesados;
+			#pragma omp atomic capture
+            procesados = ++pixelesProcesados;
+
+            #pragma omp critical(progreso)
+            {
+                cout << fixed << setprecision(2)
+                          << (100.0 * procesados / totalPixeles)
+                          << "%\r" << flush;
+            }
 		}
 	}
+	cout << endl;
 	im.curvaGamma(2.2f);
 	im.write(path);
 }

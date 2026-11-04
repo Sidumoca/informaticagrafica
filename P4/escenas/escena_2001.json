@@ -6,7 +6,7 @@
     "forward": {"x": 0, "y": 0, "z": 1.2},
     "width": 880,
     "height": 400,
-    "raysPerPixel": 50
+    "raysPerPixel": 500
   },
   "primitivas": [
     {
