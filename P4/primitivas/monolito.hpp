@@ -13,7 +13,8 @@ public:
 	float mediaLen[3];
 
 
-	Monolito(PD centro, PD i, PD j, PD k, Emision emisionIn, Reflectancia reflectanciaIn);
+
+	Monolito(PD centro, PD i, PD j, PD k, Emision emisionIn, Reflectancia reflectanciaIn, float indiceRefraccionIn);
 	bool intersecta(const Ray& ray, PD& puntoInterseccionOut, PD& normalOut) const override;
 }; 
 

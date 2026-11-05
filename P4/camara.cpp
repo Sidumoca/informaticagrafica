@@ -83,7 +83,7 @@ void Camara::imprimirImagen(const char *path){
 
             #pragma omp critical(progreso)
             {
-                cout << fixed << setprecision(2)
+                cout << fixed << setprecision(1)
                           << (100.0 * procesados / totalPixeles)
                           << "%\r" << flush;
             }

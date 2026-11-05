@@ -2,8 +2,8 @@
 #include <cmath>
 #include <iostream>
 
-Esfera::Esfera(PD centroIn, float radioIn, Emision emisionIn, Reflectancia reflectanciaIn)
-	:Primitiva(emisionIn, reflectanciaIn)
+Esfera::Esfera(PD centroIn, float radioIn, Emision emisionIn, Reflectancia reflectanciaIn, float indiceRefraccionIn)
+	:Primitiva(emisionIn, reflectanciaIn, indiceRefraccionIn)
 	,centro(centroIn), radio(radioIn)
 { if(!centroIn.isPoint()) std::cerr << "El centro de la esfera debe ser un punto" << std::endl; }
 

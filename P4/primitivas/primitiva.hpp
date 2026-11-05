@@ -62,7 +62,9 @@ class Primitiva {
         
         bool esEmisiva;
 
-        explicit Primitiva(Emision emisionIn, Reflectancia reflectanciaIn):emision(emisionIn), reflectancia(reflectanciaIn)  {
+        float indiceRefraccion;
+
+        explicit Primitiva(Emision emisionIn, Reflectancia reflectanciaIn, float indiceRefraccionIn):emision(emisionIn), reflectancia(reflectanciaIn), indiceRefraccion(indiceRefraccionIn)  {
             if (emision.r > 0 || emision.g > 0 || emision.b > 0) {
                 esEmisiva = true;
             } else {

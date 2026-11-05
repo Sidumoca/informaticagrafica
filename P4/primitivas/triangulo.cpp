@@ -1,8 +1,8 @@
 #include "triangulo.hpp"
 #include <iostream>
 
-Triangulo::Triangulo(PD p1, PD p2, PD p3, Emision emisionIn, Reflectancia reflectanciaIn)
-	:Primitiva(emisionIn, reflectanciaIn){ 
+Triangulo::Triangulo(PD p1, PD p2, PD p3, Emision emisionIn, Reflectancia reflectanciaIn, float indiceRefraccionIn)
+	:Primitiva(emisionIn, reflectanciaIn, indiceRefraccionIn){ 
     if(!p1.isPoint() || !p2.isPoint() || !p3.isPoint()) std::cerr << "El triangulo debe estar compuesto de tres puntos." << std::endl; 
 	this->p1 = p1; this->p2 = p2; this->p3 = p3;
 	dir1 = p2 - p1;

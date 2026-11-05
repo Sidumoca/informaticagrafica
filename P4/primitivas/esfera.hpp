@@ -10,7 +10,7 @@ public:
 	PD centro;
 	float radio;
 
-	Esfera(PD centroIn, float radioIn, Emision emisionIn, Reflectancia reflectanciaIn);
+	Esfera(PD centroIn, float radioIn, Emision emisionIn, Reflectancia reflectanciaIn, float indiceRefraccionIn);
 	bool intersecta(const Ray& ray, PD& puntoInterseccionOut, PD& normalOut) const override;
 }; 
 

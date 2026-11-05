@@ -174,31 +174,33 @@ bool Ray::intersecta(const Escena& escena, PD& puntoInterseccionOut, Emision& em
 		//calculo rayos de sombra ----------------------------------
 		Emision emLuz = {0,0,0};
 
-		for(const auto& luzPuntual : escena.lucesPuntuales) {
-			PD direccionLuz = luzPuntual->posicion - puntoInterseccionOut;
-			float dist = direccionLuz.module();
-			PD wi= direccionLuz / dist; //normalizo
+		if(suceso==DIFUSO){
+			for(const auto& luzPuntual : escena.lucesPuntuales) {
+				PD direccionLuz = luzPuntual->posicion - puntoInterseccionOut;
+				float dist = direccionLuz.module();
+				PD wi= direccionLuz / dist; //normalizo
 
-			Ray rayoSombra(puntoInterseccionOut + normal * 0.001f, wi);
-			bool enSombra = false;
-			PD puntoInterseccionRayoSombra;
-			PD auxNormal;
+				Ray rayoSombra(puntoInterseccionOut + normal * 0.001f, wi);
+				bool enSombra = false;
+				PD puntoInterseccionRayoSombra;
+				PD auxNormal;
 
-			for(const auto& primitiva : escena.primitivas) {
-				if(primitiva->intersecta(rayoSombra, puntoInterseccionRayoSombra, auxNormal)) {
-					float distObstaculo = (puntoInterseccionRayoSombra - rayoSombra.origen).module();
-					if(distObstaculo < dist) {
-						enSombra = true;
-						break; //si hay algo antes de la luz
+				for(const auto& primitiva : escena.primitivas) {
+					if(primitiva->intersecta(rayoSombra, puntoInterseccionRayoSombra, auxNormal)) {
+						float distObstaculo = (puntoInterseccionRayoSombra - rayoSombra.origen).module();
+						if(distObstaculo < dist) {
+							enSombra = true;
+							break; //si hay algo antes de la luz
+						}
 					}
 				}
-			}
 
-			if(!enSombra){
-				float coseno = max(0.0f, normal.dot(wi)); //el coseno (tercera parte)
-				float reduccionDistancia = 1.0 / (dist* dist); //1/dist^2
+				if(!enSombra){
+					float coseno = max(0.0f, normal.dot(wi)); //el coseno (tercera parte)
+					float reduccionDistancia = 1.0 / (dist* dist); //1/dist^2
 
-				emLuz = emLuz + ((luzPuntual->emision * reduccionDistancia) * (primitivaCercana->reflectancia.kd / M_PI) * coseno);
+					emLuz = emLuz + ((luzPuntual->emision * reduccionDistancia) * (primitivaCercana->reflectancia.kd / M_PI) * coseno);
+				}
 			}
 		}
 

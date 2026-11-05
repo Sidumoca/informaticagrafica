@@ -47,6 +47,13 @@ Reflectancia leerReflectancia(const json& object) {
     };
 }
 
+float leerIndiceRefraccion(const json& object) {
+	if(!object.contains("indiceRefraccion")) {
+		return 1.5f;
+	}
+	return object.value("indiceRefraccion", 1.0f);
+}
+
 int main(int argc, char* argv[]) {
 
 	if (argc < 2) {
@@ -113,7 +120,8 @@ int main(int argc, char* argv[]) {
 						1
 					),
 					leerEmision(object),
-					leerReflectancia(object)
+					leerReflectancia(object),
+					leerIndiceRefraccion(object)
 				)
 			);
 		} else if(type == "esfera"){
@@ -127,7 +135,8 @@ int main(int argc, char* argv[]) {
 					),
 					object["radio"].get<float>(),
 					leerEmision(object),
-					leerReflectancia(object)
+					leerReflectancia(object),
+					leerIndiceRefraccion(object)
 				)
 			);
 		} else if(type == "monolito"){
@@ -158,7 +167,8 @@ int main(int argc, char* argv[]) {
 						0
 					),
 					leerEmision(object),
-					leerReflectancia(object)
+					leerReflectancia(object),
+					leerIndiceRefraccion(object)
 				)
 			);
 		} else if(type == "plano"){
@@ -172,7 +182,8 @@ int main(int argc, char* argv[]) {
 						0
 					),
 					leerEmision(object),
-					leerReflectancia(object)
+					leerReflectancia(object),
+					leerIndiceRefraccion(object)
 				)
 			);
 		} else {

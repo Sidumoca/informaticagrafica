@@ -6,8 +6,8 @@
 
 using namespace std;
 
-Monolito::Monolito(PD c, PD i, PD j, PD k, Emision emisionIn, Reflectancia reflectanciaIn)
-	:Primitiva(emisionIn, reflectanciaIn)
+Monolito::Monolito(PD c, PD i, PD j, PD k, Emision emisionIn, Reflectancia reflectanciaIn, float indiceRefraccionIn)
+	:Primitiva(emisionIn, reflectanciaIn, indiceRefraccionIn)
 	,centro(c), i(i), j(j), k(k)
 { if(!centro.isPoint()) cerr << "El centro del monolito debe ser un punto" << endl; 
   if(i.isPoint() || j.isPoint() || k.isPoint()) cerr << "Los vectores i, j y k del monolito deben ser vectores" << endl;

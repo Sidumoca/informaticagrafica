@@ -1,8 +1,8 @@
 #include "plano.hpp"
 #include <iostream>
 
-Plano::Plano(float distanciaIn, PD normalIn, Emision emisionIn, Reflectancia reflectanciaIn)
-	:Primitiva(emisionIn, reflectanciaIn)
+Plano::Plano(float distanciaIn, PD normalIn, Emision emisionIn, Reflectancia reflectanciaIn, float indiceRefraccionIn)
+	:Primitiva(emisionIn, reflectanciaIn, indiceRefraccionIn)
 	,distancia(distanciaIn){ 
     if(normalIn.isPoint()) std::cerr << "La normal del plano debe ser una dirección." << std::endl; 
     //normalizo normal porsiaca

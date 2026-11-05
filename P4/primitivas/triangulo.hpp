@@ -13,8 +13,8 @@ public:
 	PD normal;
 	float distancia;
 
-	Triangulo(PD p1, PD p2, PD p3, Emision emisionIn, Reflectancia reflectanciaIn);
+	Triangulo(PD p1, PD p2, PD p3, Emision emisionIn, Reflectancia reflectanciaIn, float indiceRefraccionIn);
 	bool intersecta(const Ray& ray, PD& puntoInterseccionOut, PD& normalOut) const override;
-}; 
+};
 
 #endif // TRIANGULO_HPP

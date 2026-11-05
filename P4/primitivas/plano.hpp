@@ -10,7 +10,7 @@ public:
     float distancia;
     PD normal;
 
-	Plano(float distanciaIn, PD normalIn, Emision emisionIn, Reflectancia reflectanciaIn);
+	Plano(float distanciaIn, PD normalIn, Emision emisionIn, Reflectancia reflectanciaIn, float indiceRefraccionIn);
 	bool intersecta(const Ray& ray, PD& puntoInterseccionOut, PD& normalOut) const override;
 }; 
 
