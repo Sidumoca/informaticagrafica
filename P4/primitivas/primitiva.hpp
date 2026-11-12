@@ -21,21 +21,21 @@ struct Reflectancia {
         Emision ksIn = {0.0f, 0.0f, 0.0f},
         Emision ktIn = {0.0f, 0.0f, 0.0f}
     ) : kd(kdIn), ks(ksIn), kt(ktIn) {
-        float sumaR = kd.r + ks.r + kt.r;
-        float sumaG = kd.g + ks.g + kt.g;
-        float sumaB = kd.b + ks.b + kt.b;
-        if(sumaR > 1.0f){
-            kd.r /= sumaR; ks.r /= sumaR; kt.r /= sumaR;
-            std::cerr << "Warning: La suma de rojos es mas de 1. Normalizando" << std::endl;
-        } 
-        if(sumaG > 1.0f){
-            kd.g /= sumaG; ks.g /= sumaG; kt.g /= sumaG;
-            std::cerr << "Warning: La suma de verdes es mas de 1. Normalizando" << std::endl;
-        } 
-        if(sumaB > 1.0f){
-            kd.b /= sumaB; ks.b /= sumaB; kt.b /= sumaB;
-            std::cerr << "Warning: La suma de azules es mas de 1. Normalizando" << std::endl;
-        } 
+        // float sumaR = kd.r + ks.r + kt.r;
+        // float sumaG = kd.g + ks.g + kt.g;
+        // float sumaB = kd.b + ks.b + kt.b;
+        // if(sumaR > 1.0f){
+        //     kd.r /= sumaR; ks.r /= sumaR; kt.r /= sumaR;
+        //     std::cerr << "Warning: La suma de rojos es mas de 1" << std::endl;
+        // } 
+        // if(sumaG > 1.0f){
+        //     kd.g /= sumaG; ks.g /= sumaG; kt.g /= sumaG;
+        //     std::cerr << "Warning: La suma de verdes es mas de 1" << std::endl;
+        // } 
+        // if(sumaB > 1.0f){
+        //     kd.b /= sumaB; ks.b /= sumaB; kt.b /= sumaB;
+        //     std::cerr << "Warning: La suma de azules es mas de 1" << std::endl;
+        // } 
 
         float maxKd = std::max({kd.r, kd.g, kd.b});
         float maxKs = std::max({ks.r, ks.g, ks.b});
