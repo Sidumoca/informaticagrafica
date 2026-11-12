@@ -1,4 +1,4 @@
-// En la carpeta build: "cmake ..", "cmake --build ." y "./main3"
+// En P4  "cmake -S . -B build", "cmake --build ./build/" y "./build/main3 <archivo.json>"
 
 #include <vector>
 #include <iostream>
