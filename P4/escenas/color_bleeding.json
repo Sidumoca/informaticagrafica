@@ -1,0 +1,121 @@
+{
+  "camara": {
+    "origen": {
+      "x": 0,
+      "y": 0,
+      "z": -3.5
+    },
+    "left": {
+      "x": -1,
+      "y": 0,
+      "z": 0
+    },
+    "up": {
+      "x": 0,
+      "y": 1,
+      "z": 0
+    },
+    "forward": {
+      "x": 0,
+      "y": 0,
+      "z": 3
+    },
+    "width": 512,
+    "height": 512,
+    "raysPerPixel": 512
+  },
+  "primitivas": [
+    {
+      "type": "plano",
+      "distancia": 1,
+      "normal": {
+        "x": 1,
+        "y": 0,
+        "z": 0
+      },
+      "emision": {"r": 0, "g": 0, "b": 0},
+      "kd": {"r": 1, "g": 0, "b": 0}
+    },
+    {
+      "type": "plano",
+      "distancia": 1,
+      "normal": {
+        "x": -1,
+        "y": 0,
+        "z": 0
+      },
+      "emision": {"r": 0, "g": 0, "b": 0},
+      "kd": {"r": 0, "g": 1, "b": 0}
+    },
+    {
+      "type": "plano",
+      "distancia": 1,
+      "normal": {
+        "x": 0,
+        "y": -1,
+        "z": 0
+      },
+      "emision": {"r": 0, "g": 0, "b": 0},
+      "kd": {"r": 0.24, "g": 0.24, "b": 0.24}
+    },
+    {
+      "type": "plano",
+      "distancia": 1,
+      "normal": {
+        "x": 0,
+        "y": 1,
+        "z": 0
+      },
+      "emision": {"r": 0, "g": 0, "b": 0},
+      "kd": {"r": 0.08, "g": 0.08, "b": 0.08}
+    },
+    {
+      "type": "plano",
+      "distancia": 1,
+      "normal": {
+        "x": 0,
+        "y": 0,
+        "z": -1
+      },
+      "emision": {"r": 0, "g": 0, "b": 0},
+      "kd": {"r": 0.24, "g": 0.24, "b": 0.24}
+    },
+    {
+      "type": "esfera",
+      "centro": {
+        "x": -0.5,
+        "y": -0.7,
+        "z": 0.25
+      },
+      "radio": 0.3,
+      "emision": {"r": 0, "g": 0, "b": 0},
+      "kd": {"r": 0.8, "g": 0.6, "b": 0.9}
+    },
+    {
+      "type": "esfera",
+      "centro": {
+        "x": 0.5,
+        "y": -0.7,
+        "z": -0.25
+      },
+      "radio": 0.3,
+      "emision": {"r": 0, "g": 0, "b": 0},
+      "kd": {"r": 0.7, "g": 0.7, "b": 0.7},
+      "ks": {"r": 0.3, "g": 0.3, "b": 0.3}
+    }
+  ],
+  "lucesPuntuales": [
+    {
+      "posicion": {
+        "x": 0,
+        "y": 0.5,
+        "z": 0
+      },
+      "color": {
+        "r": 1,
+        "g": 1,
+        "b": 1
+      }
+    }
+  ]
+}
